@@ -2,8 +2,6 @@
 
 from pathlib import Path
 
-import pytest
-
 INDEX_HTML = Path(__file__).parent.parent / "index.html"
 
 

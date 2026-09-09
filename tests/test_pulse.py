@@ -1,11 +1,15 @@
 """Tests for the pulse core logic."""
 
-import pytest
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timedelta, timezone
+
 from src.pulse import (
-    time_ago, event_icon, event_url, event_summary,
-    filter_events, summarize_events, format_daily_post,
-    GITHUB_USER
+    event_icon,
+    event_summary,
+    event_url,
+    filter_events,
+    format_daily_post,
+    summarize_events,
+    time_ago,
 )
 
 
@@ -50,7 +54,7 @@ class TestEventUrl:
         event = {
             "type": "PushEvent",
             "repo": {"name": "andyholst/llama-ai"},
-            "payload": {"before": "abc123", "head": "def456"}
+            "payload": {"before": "abc123", "head": "def456"},
         }
         url = event_url(event)
         assert "compare/abc123...def456" in url
@@ -59,7 +63,7 @@ class TestEventUrl:
         event = {
             "type": "PullRequestEvent",
             "repo": {"name": "andyholst/llama-ai"},
-            "payload": {"pull_request": {"html_url": "https://github.com/andyholst/llama-ai/pull/42"}}
+            "payload": {"pull_request": {"html_url": "https://github.com/andyholst/llama-ai/pull/42"}},
         }
         url = event_url(event)
         assert url == "https://github.com/andyholst/llama-ai/pull/42"
@@ -68,7 +72,7 @@ class TestEventUrl:
         event = {
             "type": "IssuesEvent",
             "repo": {"name": "andyholst/llama-ai"},
-            "payload": {"issue": {"html_url": "https://github.com/andyholst/llama-ai/issues/10"}}
+            "payload": {"issue": {"html_url": "https://github.com/andyholst/llama-ai/issues/10"}},
         }
         url = event_url(event)
         assert url == "https://github.com/andyholst/llama-ai/issues/10"
@@ -77,7 +81,7 @@ class TestEventUrl:
         event = {
             "type": "CreateEvent",
             "repo": {"name": "andyholst/llama-ai"},
-            "payload": {"ref": "feat/new-feature", "ref_type": "branch"}
+            "payload": {"ref": "feat/new-feature", "ref_type": "branch"},
         }
         url = event_url(event)
         assert "tree/feat/new-feature" in url
@@ -86,7 +90,7 @@ class TestEventUrl:
         event = {
             "type": "ForkEvent",
             "repo": {"name": "andyholst/llama-ai"},
-            "payload": {"forkee": {"html_url": "https://github.com/forker/llama-ai"}}
+            "payload": {"forkee": {"html_url": "https://github.com/forker/llama-ai"}},
         }
         url = event_url(event)
         assert url == "https://github.com/forker/llama-ai"
@@ -97,7 +101,7 @@ class TestEventSummary:
         event = {
             "type": "PushEvent",
             "repo": {"name": "andyholst/llama-ai"},
-            "payload": {"commits": [{"message": "feat: add new feature", "id": "abc1234567890"}]}
+            "payload": {"commits": [{"message": "feat: add new feature", "id": "abc1234567890"}]},
         }
         summary = event_summary(event)
         assert "Pushed" in summary
@@ -108,14 +112,16 @@ class TestEventSummary:
         event = {
             "type": "PushEvent",
             "repo": {"name": "andyholst/llama-ai"},
-            "payload": {"commits": [
-                {"message": "commit 1", "id": "aaa"},
-                {"message": "commit 2", "id": "bbb"},
-                {"message": "commit 3", "id": "ccc"},
-                {"message": "commit 4", "id": "ddd"},
-                {"message": "commit 5", "id": "eee"},
-                {"message": "commit 6", "id": "fff"},
-            ]}
+            "payload": {
+                "commits": [
+                    {"message": "commit 1", "id": "aaa"},
+                    {"message": "commit 2", "id": "bbb"},
+                    {"message": "commit 3", "id": "ccc"},
+                    {"message": "commit 4", "id": "ddd"},
+                    {"message": "commit 5", "id": "eee"},
+                    {"message": "commit 6", "id": "fff"},
+                ]
+            },
         }
         summary = event_summary(event)
         assert "1 more commit" in summary
@@ -126,8 +132,8 @@ class TestEventSummary:
             "repo": {"name": "andyholst/llama-ai"},
             "payload": {
                 "action": "opened",
-                "pull_request": {"title": "Add new feature", "number": 42, "body": "Description here", "merged": False}
-            }
+                "pull_request": {"title": "Add new feature", "number": 42, "body": "Description here", "merged": False},
+            },
         }
         summary = event_summary(event)
         assert "Opened" in summary
@@ -140,8 +146,8 @@ class TestEventSummary:
             "repo": {"name": "andyholst/llama-ai"},
             "payload": {
                 "action": "closed",
-                "pull_request": {"title": "Fix bug", "number": 99, "body": "", "merged": True}
-            }
+                "pull_request": {"title": "Fix bug", "number": 99, "body": "", "merged": True},
+            },
         }
         summary = event_summary(event)
         assert "Merged" in summary
@@ -153,8 +159,8 @@ class TestEventSummary:
             "repo": {"name": "andyholst/llama-ai"},
             "payload": {
                 "action": "opened",
-                "issue": {"title": "Bug report", "number": 10, "body": "Something broke"}
-            }
+                "issue": {"title": "Bug report", "number": 10, "body": "Something broke"},
+            },
         }
         summary = event_summary(event)
         assert "Opened" in summary
@@ -166,8 +172,12 @@ class TestEventSummary:
             "type": "PullRequestReviewEvent",
             "repo": {"name": "andyholst/llama-ai"},
             "payload": {
-                "review": {"state": "approved", "body": "LGTM!", "pull_request_url": "https://api.github.com/repos/andyholst/llama-ai/pulls/42"}
-            }
+                "review": {
+                    "state": "approved",
+                    "body": "LGTM!",
+                    "pull_request_url": "https://api.github.com/repos/andyholst/llama-ai/pulls/42",
+                }
+            },
         }
         summary = event_summary(event)
         assert "approved" in summary.lower() or "Approved" in summary
@@ -256,11 +266,30 @@ class TestFormatDailyPost:
 
     def test_with_events(self):
         events = [
-            {"type": "PushEvent", "repo": {"name": "andyholst/llama-ai"}, "payload": {"commits": [{"message": "feat: test", "id": "abc1234"}]}, "created_at": "2026-09-09T00:00:00Z"},
-            {"type": "PullRequestEvent", "repo": {"name": "andyholst/llama-ai"}, "payload": {"action": "opened", "pull_request": {"title": "New PR", "number": 1, "merged": False}}, "created_at": "2026-09-09T00:00:00Z"},
+            {
+                "type": "PushEvent",
+                "repo": {"name": "andyholst/llama-ai"},
+                "payload": {"commits": [{"message": "feat: test", "id": "abc1234"}]},
+                "created_at": "2026-09-09T00:00:00Z",
+            },
+            {
+                "type": "PullRequestEvent",
+                "repo": {"name": "andyholst/llama-ai"},
+                "payload": {"action": "opened", "pull_request": {"title": "New PR", "number": 1, "merged": False}},
+                "created_at": "2026-09-09T00:00:00Z",
+            },
         ]
         user = {"login": "andyholst"}
-        repos = [{"name": "llama-ai", "stargazers_count": 5, "forks_count": 2, "description": "test repo", "language": "Python", "html_url": "https://github.com/andyholst/llama-ai"}]
+        repos = [
+            {
+                "name": "llama-ai",
+                "stargazers_count": 5,
+                "forks_count": 2,
+                "description": "test repo",
+                "language": "Python",
+                "html_url": "https://github.com/andyholst/llama-ai",
+            }
+        ]
         result = format_daily_post(events, user, repos)
         assert "andyholst" in result
         assert "GitHub Pulse" in result

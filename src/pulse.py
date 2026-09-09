@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
+from datetime import datetime, timezone
 import json
 import subprocess
-from datetime import datetime, timezone
 from typing import Any
 
 GITHUB_USER = "andyholst"
@@ -16,7 +16,9 @@ def gh_api(path: str) -> Any:
     url = f"{API_BASE}/{path}"
     result = subprocess.run(
         ["curl", "-s", "-H", "Accept: application/vnd.github+json", url],
-        capture_output=True, text=True, timeout=30
+        capture_output=True,
+        text=True,
+        timeout=30,
     )
     try:
         return json.loads(result.stdout)

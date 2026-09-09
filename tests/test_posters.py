@@ -1,10 +1,11 @@
 """Tests for X and LinkedIn posters."""
 
-import pytest
 import os
-from unittest.mock import patch, MagicMock
-from src.x_poster import XPoster
+from unittest.mock import MagicMock, patch
+
+import pytest
 from src.linkedin_poster import LinkedInPoster
+from src.x_poster import XPoster
 
 
 class TestXPoster:
