@@ -20,6 +20,7 @@
   --red: #ff6b6b;
   --yellow: #ffeaa7;
   --blue: #74b9ff;
+  --radius: 12px;
 }
 * { margin:0; padding:0; box-sizing:border-box; }
 body {
@@ -27,283 +28,526 @@ body {
   background: var(--bg);
   color: var(--text);
   min-height: 100vh;
-  line-height: 1.6;
 }
-.container { max-width: 1100px; margin: 0 auto; padding: 2rem 1.5rem; }
+.container { max-width: 1200px; margin: 0 auto; padding: 2rem 1.5rem; }
 
-/* Loading */
+/* ── Loading ── */
 .loading {
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  min-height: 60vh; gap: 1.5rem;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  min-height:60vh; gap:1.5rem;
 }
 .spinner {
-  width: 48px; height: 48px;
-  border: 4px solid var(--border);
-  border-top-color: var(--accent);
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
+  width:48px; height:48px; border:4px solid var(--border);
+  border-top-color: var(--accent); border-radius:50%;
+  animation: spin .8s linear infinite;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
-.loading-text { color: var(--text2); font-size: 0.9rem; }
+.loading-text { color: var(--text2); font-size:.9rem; }
 
-/* Header */
+/* ── Error ── */
+.error-box {
+  background: var(--surface); border:1px solid var(--red);
+  border-radius: var(--radius); padding:2rem; text-align:center;
+}
+
+/* ── Header ── */
 .header {
-  display: flex; align-items: center; gap: 1.5rem;
-  margin-bottom: 2.5rem;
-  padding-bottom: 2rem;
-  border-bottom: 1px solid var(--border);
+  display:flex; align-items:center; gap:1.5rem;
+  margin-bottom:2rem; padding-bottom:2rem;
+  border-bottom:1px solid var(--border);
 }
 .avatar {
-  width: 80px; height: 80px; border-radius: 50%;
-  border: 3px solid var(--accent);
-  box-shadow: 0 0 30px rgba(108,92,231,0.3);
+  width:80px; height:80px; border-radius:50%;
+  border:3px solid var(--accent);
+  box-shadow:0 0 30px rgba(108,92,231,.3);
 }
 .header-info h1 {
-  font-size: 1.8rem; font-weight: 800;
-  background: linear-gradient(135deg, var(--accent2), var(--blue));
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  font-size:1.8rem; font-weight:800;
+  background:linear-gradient(135deg,var(--accent2),var(--blue));
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
 }
-.header-info .handle { color: var(--text2); font-size: 0.95rem; }
-.header-info .bio { color: var(--text2); font-size: 0.85rem; margin-top: 0.25rem; }
+.header-info .handle { color:var(--text2); font-size:.95rem; }
+.header-info .bio { color:var(--text2); font-size:.85rem; margin-top:.25rem; }
 
-/* Live indicator */
 .live-dot {
-  display: inline-block; width: 8px; height: 8px;
-  background: var(--green); border-radius: 50%;
-  margin-right: 6px;
+  display:inline-block; width:8px; height:8px;
+  background:var(--green); border-radius:50%;
   animation: pulse 2s ease-in-out infinite;
+  margin-right:6px;
 }
-@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
-.live-label { font-size: 0.7rem; color: var(--green); text-transform: uppercase; letter-spacing: 1px; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+.live-label { font-size:.7rem; color:var(--green); text-transform:uppercase; letter-spacing:1px; }
 
-/* Stats row */
+/* ── Filter Buttons ── */
+.filters {
+  display:flex; flex-wrap:wrap; gap:.5rem;
+  margin-bottom:2rem; padding-bottom:1rem;
+  border-bottom:1px solid var(--border);
+}
+.filter-btn {
+  background:var(--surface); color:var(--text2);
+  border:1px solid var(--border);
+  border-radius:8px; padding:.5rem 1rem;
+  font-size:.8rem; font-weight:500;
+  cursor:pointer; transition:all .2s;
+}
+.filter-btn:hover { border-color:var(--accent); color:var(--text); }
+.filter-btn.active {
+  background:var(--accent); color:#fff;
+  border-color:var(--accent);
+}
+.filter-btn .count {
+  display:inline-block; margin-left:4px;
+  font-size:.7rem; opacity:.8;
+}
+
+/* ── Stats Grid ── */
 .stats-row {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 1rem; margin-bottom: 2.5rem;
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr));
+  gap:1rem; margin-bottom:2rem;
 }
 .stat-card {
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: 12px; padding: 1.2rem; text-align: center;
-  transition: transform 0.2s, border-color 0.2s;
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--radius); padding:1rem; text-align:center;
+  transition:transform .2s, border-color .2s;
 }
-.stat-card:hover { transform: translateY(-2px); border-color: var(--accent); }
-.stat-value { font-size: 1.8rem; font-weight: 700; color: var(--accent2); }
-.stat-label { font-size: 0.75rem; color: var(--text2); text-transform: uppercase; letter-spacing: 0.5px; }}
+.stat-card:hover { transform:translateY(-2px); border-color:var(--accent); }
+.stat-value { font-size:1.6rem; font-weight:700; color:var(--accent2); }
+.stat-label { font-size:.7rem; color:var(--text2); text-transform:uppercase; letter-spacing:.5px; }
 
-.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2.5rem; }
-@media (max-width: 768px) { .grid { grid-template-columns: 1fr; } }
+/* ── Two-column layout ── */
+.grid { display:grid; grid-template-columns:1.4fr 1fr; gap:1.5rem; margin-bottom:2rem; }
+@media (max-width: 900px) { .grid { grid-template-columns:1fr; } }
 
 .section {
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: 16px; padding: 1.5rem;
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:16px; padding:1.5rem;
 }
 .section-title {
-  font-size: 1rem; font-weight: 600; margin-bottom: 1rem;
-  display: flex; align-items: center; gap: 0.5rem;
-  color: var(--text);
+  font-size:1rem; font-weight:600; margin-bottom:1rem;
+  display:flex; align-items:center; gap:.5rem;
 }
 
-/* Events */
-.events-list { max-height: 600px; overflow-y: auto; }
+/* ── Activity Feed ── */
+.events-list { max-height:700px; overflow-y:auto; }
 .event-item {
-  display: flex; align-items: center; gap: 0.75rem;
-  padding: 0.6rem 0; border-bottom: 1px solid var(--border);
-  font-size: 0.85rem;
-  animation: fadeIn 0.3s ease both;
+  display:flex; align-items:flex-start; gap:.75rem;
+  padding:.85rem 0; border-bottom:1px solid var(--border);
+  font-size:.85rem; text-decoration:none; color:inherit;
+  transition:background .15s;
+  border-radius:8px;
 }
-.event-item:last-child { border-bottom: none; }
-.event-icon { font-size: 1.1rem; flex-shrink: 0; }
-.event-desc { flex: 1; color: var(--text); }
-.event-desc i { color: var(--text2); font-style: normal; }
-.event-time { color: var(--text2); font-size: 0.75rem; flex-shrink: 0; font-family: 'JetBrains Mono', monospace; }
+.event-item:last-child { border-bottom:none; }
+.event-item:hover { background:var(--surface2); }
+.event-icon { font-size:1.2rem; flex-shrink:0; margin-top:2px; }
+.event-content { flex:1; min-width:0; }
+.event-title {
+  color:var(--text); font-weight:500;
+  display:flex; align-items:center; gap:.5rem;
+  word-break:break-word;
+}
+.event-title code {
+  background:var(--surface2); padding:2px 6px; border-radius:4px;
+  font-size:.75rem; font-family:'JetBrains Mono',monospace;
+  color:var(--accent2);
+}
+.event-body {
+  color:var(--text2); font-size:.78rem; margin-top:.3rem;
+  line-height:1.4; overflow:hidden;
+  display:-webkit-box; -webkit-line-clamp:3;
+  -webkit-box-orient:vertical;
+}
+.event-meta {
+  display:flex; align-items:center; gap:.75rem; margin-top:.4rem;
+  font-size:.72rem; color:var(--text2);
+  font-family:'JetBrains Mono',monospace;
+}
+.event-meta a { color:var(--accent2); text-decoration:none; }
+.event-meta a:hover { text-decoration:underline; }
+.event-badge {
+  display:inline-block; padding:2px 8px; border-radius:99px;
+  font-size:.68rem; font-weight:600; text-transform:uppercase;
+  letter-spacing:.3px;
+}
+.badge-open { background:rgba(0,184,148,.15); color:var(--green); }
+.badge-merged { background:rgba(108,92,231,.15); color:var(--accent2); }
+.badge-closed { background:rgba(255,107,107,.15); color:var(--red); }
+.badge-review { background:rgba(116,185,255,.15); color:var(--blue); }
 
-/* Repo bars */
+/* ── Repo bars ── */
 .repo-bar {
-  display: flex; align-items: center; gap: 0.75rem;
-  margin-bottom: 0.6rem; font-size: 0.8rem;
+  display:flex; align-items:center; gap:.75rem;
+  margin-bottom:.6rem; font-size:.8rem;
 }
-.repo-name { width: 100px; flex-shrink: 0; color: var(--text2); font-weight: 500; }
-.bar-track { flex: 1; height: 8px; background: var(--surface2); border-radius: 4px; overflow: hidden; }
-.bar-fill { height: 100%; border-radius: 4px; transition: width 0.5s ease; }
-.repo-count { width: 25px; text-align: right; color: var(--text2); font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; }
+.repo-name { width:100px; flex-shrink:0; color:var(--text2); font-weight:500; }
+.bar-track { flex:1; height:8px; background:var(--surface2); border-radius:4px; overflow:hidden; }
+.bar-fill { height:100%; border-radius:4px; transition:width .5s ease; }
+.repo-count { width:25px; text-align:right; color:var(--text2); font-family:'JetBrains Mono',monospace; font-size:.75rem; }
 
-/* Repo cards */
+/* ── Repo cards ── */
 .repos-grid {
-  display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 1rem; margin-bottom: 2.5rem;
+  display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
+  gap:1rem; margin-bottom:2rem;
 }
 .repo-card {
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: 12px; padding: 1.2rem; text-decoration: none; color: inherit;
-  transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--radius); padding:1.2rem;
+  text-decoration:none; color:inherit;
+  transition:transform .2s, border-color .2s, box-shadow .2s;
 }
 .repo-card:hover {
-  transform: translateY(-3px); border-color: var(--accent);
-  box-shadow: 0 8px 30px rgba(108,92,231,0.15);
+  transform:translateY(-3px); border-color:var(--accent);
+  box-shadow:0 8px 30px rgba(108,92,231,.15);
 }
-.repo-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
-.repo-card-name { font-weight: 600; font-size: 0.9rem; }
-.repo-card-lang { font-size: 0.7rem; font-weight: 600; }
-.repo-card-desc { font-size: 0.75rem; color: var(--text2); margin-bottom: 0.75rem; line-height: 1.4; }
-.repo-card-stats { display: flex; gap: 1rem; font-size: 0.75rem; color: var(--text2); }
+.repo-card-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:.5rem; }
+.repo-card-name { font-weight:600; font-size:.9rem; }
+.repo-card-lang { font-size:.7rem; font-weight:600; }
+.repo-card-desc { font-size:.75rem; color:var(--text2); margin-bottom:.75rem; line-height:1.4; }
+.repo-card-stats { display:flex; gap:1rem; font-size:.75rem; color:var(--text2); }
 
-/* Footer */
+/* ── Footer ── */
 .footer {
-  text-align: center; padding: 2rem 0; color: var(--text2);
-  font-size: 0.8rem; border-top: 1px solid var(--border);
-  margin-top: 2rem;
+  text-align:center; padding:2rem 0; color:var(--text2);
+  font-size:.8rem; border-top:1px solid var(--border); margin-top:2rem;
 }
-.footer a { color: var(--accent2); text-decoration: none; }
-.footer a:hover { text-decoration: underline; }
+.footer a { color:var(--accent2); text-decoration:none; }
+.footer a:hover { text-decoration:underline; }
 
-/* Error */
-.error-box {
-  background: var(--surface); border: 1px solid var(--red);
-  border-radius: 12px; padding: 2rem; text-align: center;
-}
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width:6px; }
+::-webkit-scrollbar-track { background:var(--surface); }
+::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
 
-/* Scrollbar */
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: var(--surface); }
-::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: var(--accent); }
-
-@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+/* ── Animations ── */
+@keyframes fadeUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+.event-item { animation: fadeUp .3s ease both; }
 </style>
 </head>
 <body>
 <div class="container">
 
-<!-- Loading state -->
+<!-- Loading -->
 <div id="loading" class="loading">
   <div class="spinner"></div>
   <div class="loading-text">Fetching live data from GitHub...</div>
 </div>
 
-<!-- Error state -->
+<!-- Error -->
 <div id="error" class="error-box" style="display:none">
   <h2>⚠️ Could not load GitHub data</h2>
-  <p id="error-msg" style="color:var(--text2);margin-top:0.5rem"></p>
-  <p style="margin-top:1rem"><button onclick="location.reload()" style="background:var(--accent);color:#fff;border:none;padding:0.5rem 1.5rem;border-radius:8px;cursor:pointer;font-size:0.9rem">Retry</button></p>
+  <p id="error-msg" style="color:var(--text2);margin-top:.5rem"></p>
+  <button onclick="location.reload()" style="background:var(--accent);color:#fff;border:none;padding:.5rem 1.5rem;border-radius:8px;cursor:pointer;font-size:.9rem;margin-top:1rem">Retry</button>
 </div>
 
-<!-- Main content (hidden until loaded) -->
+<!-- Content -->
 <div id="content" style="display:none">
 
-<!-- Header -->
-<div class="header">
-  <img id="avatar" class="avatar" src="" alt="Andy Holst">
-  <div class="header-info">
-    <h1 id="name">Andy Holst</h1>
-    <div class="handle"><span class="live-dot"></span><span class="live-label">LIVE</span> <span id="handle">@andyholst</span> · <span id="location">Sweden</span></div>
-    <div id="bio" class="bio">DevSecOps Software Engineer & Business Owner</div>
-  </div>
-</div>
-
-<!-- Profile Stats -->
-<div class="stats-row" id="profile-stats">
-  <!-- filled by JS -->
-</div>
-
-<!-- Activity Stats -->
-<div class="stats-row" id="activity-stats">
-  <!-- filled by JS -->
-</div>
-
-<!-- Two column: Events + Repo Activity -->
-<div class="grid">
-  <div class="section">
-    <div class="section-title">⚡ Recent Activity</div>
-    <div class="events-list" id="events-list">
-      <!-- filled by JS -->
+  <!-- Header -->
+  <div class="header">
+    <img id="avatar" class="avatar" src="" alt="">
+    <div class="header-info">
+      <h1 id="name"></h1>
+      <div class="handle"><span class="live-dot"></span><span class="live-label">LIVE</span> <span id="handle"></span> · <span id="location"></span></div>
+      <div id="bio" class="bio"></div>
     </div>
   </div>
-  <div class="section">
-    <div class="section-title">📊 Top Active Repos</div>
-    <div id="repo-bars">
-      <!-- filled by JS -->
+
+  <!-- Profile Stats -->
+  <div class="stats-row" id="profile-stats"></div>
+
+  <!-- Activity Stats -->
+  <div class="stats-row" id="activity-stats"></div>
+
+  <!-- Filters -->
+  <div class="filters" id="filters">
+    <button class="filter-btn active" data-filter="all">All<span class="count" id="count-all"></span></button>
+    <button class="filter-btn" data-filter="pr">🔀 PRs<span class="count" id="count-pr"></span></button>
+    <button class="filter-btn" data-filter="issue">🐛 Issues<span class="count" id="count-issue"></span></button>
+    <button class="filter-btn" data-filter="commit">📦 Commits<span class="count" id="count-commit"></span></button>
+    <button class="filter-btn" data-filter="review">👀 Reviews<span class="count" id="count-review"></span></button>
+    <button class="filter-btn" data-filter="fork">🍴 Forks<span class="count" id="count-fork"></span></button>
+    <button class="filter-btn" data-filter="star">⭐ Stars<span class="count" id="count-star"></span></button>
+    <button class="filter-btn" data-filter="release">🚀 Releases<span class="count" id="count-release"></span></button>
+  </div>
+
+  <!-- Main grid -->
+  <div class="grid">
+    <!-- Activity Feed -->
+    <div class="section">
+      <div class="section-title">⚡ Recent Activity</div>
+      <div class="events-list" id="events-list"></div>
+    </div>
+
+    <!-- Sidebar -->
+    <div>
+      <!-- Top repos -->
+      <div class="section">
+        <div class="section-title">📊 Top Active Repos</div>
+        <div id="repo-bars"></div>
+      </div>
     </div>
   </div>
-</div>
 
-<!-- Repo Cards -->
-<div class="section" style="margin-bottom:2rem">
-  <div class="section-title">📦 Featured Repositories</div>
-  <div class="repos-grid" id="repos-grid">
-    <!-- filled by JS -->
+  <!-- Featured Repos -->
+  <div class="section" style="margin-bottom:2rem">
+    <div class="section-title">📦 Featured Repositories</div>
+    <div class="repos-grid" id="repos-grid"></div>
   </div>
-</div>
 
-<!-- Footer -->
-<div class="footer">
-  <p>🔥 <b>GitHub Pulse</b> for <a href="https://github.com/andyholst">@andyholst</a></p>
-  <p style="margin-top:0.5rem">
-    <a href="https://docondee.com">🌐 docondee.com</a> ·
-    <a href="https://x.com/andy_a_holst">𝕏 @andy_a_holst</a> ·
-    <a href="https://linkedin.com/in/andy-holst-devops-software-engineer">💼 LinkedIn</a>
-  </p>
-  <p style="margin-top:0.75rem; opacity:0.6">Last refreshed: <span id="refreshed-at">—</span> · Auto-refreshes every page load</p>
-</div>
+  <!-- Footer -->
+  <div class="footer">
+    <p>🔥 <b>GitHub Pulse</b> for <a href="https://github.com/andyholst">@andyholst</a></p>
+    <p style="margin-top:.5rem">
+      <a href="https://docondee.com">🌐 docondee.com</a> ·
+      <a href="https://x.com/andy_a_holst">𝕏 @andy_a_holst</a> ·
+      <a href="https://linkedin.com/in/andy-holst-devops-software-engineer">💼 LinkedIn</a>
+    </p>
+    <p style="margin-top:.75rem;opacity:.6">Refreshed <span id="refreshed-at"></span></p>
+  </div>
 
-</div><!-- /content -->
-</div><!-- /container -->
+</div>
+</div>
 
 <script>
 const USER = 'andyholst';
 const API = `https://api.github.com/users/${USER}`;
-const COLORS = [
-  '#ff6b6b','#4ecdc4','#45b7d1','#96ceb4','#ffeaa7',
-  '#dfe6e9','#fd79a8','#a29bfe','#6c5ce7','#00b894',
-  '#e17055','#fdcb6e','#e84393','#00cec9','#fab1a0',
-];
+const COLORS = ['#ff6b6b','#4ecdc4','#45b7d1','#96ceb4','#ffeaa7','#dfe6e9','#fd79a8','#a29bfe','#6c5ce7','#00b894','#e17055','#fdcb6e','#e84393','#00cec9','#fab1a0'];
 
-function eventIcon(t) {
-  return ({PushEvent:'📦',PullRequestEvent:'🔀',PullRequestReviewEvent:'👀',CreateEvent:'🌱',ForkEvent:'🍴',WatchEvent:'⭐',IssueCommentEvent:'💬',IssuesEvent:'🐛',ReleaseEvent:'🚀',DeleteEvent:'🗑️'}[t]||'✨');
-}
+/* ── helpers ── */
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const timeAgo = dt => {
+  const d = (Date.now() - new Date(dt)) / 1000;
+  if (d < 60) return `${Math.floor(d)}m ago`;
+  if (d < 3600) return `${Math.floor(d/60)}h ago`;
+  if (d < 86400) return `${Math.floor(d/3600)}d ago`;
+  return `${Math.floor(d/86400)}d ago`;
+};
+const icon = t => ({PushEvent:'📦',PullRequestEvent:'🔀',PullRequestReviewEvent:'👀',CreateEvent:'🌱',ForkEvent:'🍴',WatchEvent:'⭐',IssueCommentEvent:'💬',IssuesEvent:'🐛',ReleaseEvent:'🚀',DeleteEvent:'🗑️',CommitCommentEvent:'💬',GollumEvent:'📖'}[t]||'✨');
 
-function timeAgo(dt) {
-  const diff = (Date.now() - new Date(dt)) / 1000;
-  if (diff < 60) return `${Math.floor(diff)}m ago`;
-  if (diff < 3600) return `${Math.floor(diff/60)}h ago`;
-  if (diff < 86400) return `${Math.floor(diff/3600)}d ago`;
-  return `${Math.floor(diff/86400)}d ago`;
-}
-
-function eventDesc(e) {
-  const repo = (e.repo.name||'').split('/').pop();
-  const p = e.payload;
+/* ── event → link + summary ── */
+function evUrl(e) {
+  const repo = e.repo?.name || '';
+  const p = e.payload || {};
   switch(e.type) {
     case 'PushEvent': {
-      const cs = p.commits||[];
-      if (cs.length === 1) return `Pushed 1 commit to <b>${repo}</b>: <i>${cs[0].message.split('\n')[0].slice(0,60)}</i>`;
-      return `Pushed <b>${cs.length}</b> commits to <b>${repo}</b>`;
+      const b = p.before || '', h = p.head || '';
+      return b && h ? `https://github.com/${repo}/compare/${b}...${h}` : `https://github.com/${repo}`;
     }
-    case 'PullRequestEvent': {
-      const pr = p.pull_request||{};
-      const t = (pr.title||'?').slice(0,60);
-      if (p.action==='opened') return `Opened PR on <b>${repo}</b>: <i>${t}</i>`;
-      if (p.action==='closed'&&pr.merged) return `✅ Merged PR on <b>${repo}</b>: <i>${t}</i>`;
-      if (p.action==='closed') return `Closed PR on <b>${repo}</b>: <i>${t}</i>`;
-      return `PR [${p.action}] on <b>${repo}</b>`;
+    case 'PullRequestEvent': return p.pull_request?.html_url || `https://github.com/${repo}`;
+    case 'PullRequestReviewEvent': return p.review?.html_url || `https://github.com/${repo}`;
+    case 'IssuesEvent': return p.issue?.html_url || `https://github.com/${repo}/issues`;
+    case 'IssueCommentEvent': return p.comment?.html_url || `https://github.com/${repo}/issues`;
+    case 'CreateEvent': {
+      const r = p.ref || '';
+      if (p.ref_type === 'branch') return `https://github.com/${repo}/tree/${r}`;
+      if (p.ref_type === 'tag') return `https://github.com/${repo}/releases/tag/${r}`;
+      return `https://github.com/${repo}`;
     }
-    case 'PullRequestReviewEvent': return `👀 Reviewed a PR on <b>${repo}</b>`;
-    case 'CreateEvent': return `🌱 Created ${p.ref_type||'?'} <b>${p.ref||'?'}</b> in <b>${repo}</b>`;
-    case 'ForkEvent': return `🍴 Forked <b>${repo}</b>`;
-    case 'WatchEvent': return `⭐ Starred <b>${repo}</b>`;
-    case 'IssueCommentEvent': return `💬 Commented on an issue in <b>${repo}</b>`;
-    case 'ReleaseEvent': return `🚀 Released on <b>${repo}</b>`;
-    default: return `${eventIcon(e.type)} ${e.type} on <b>${repo}</b>`;
+    case 'ForkEvent': return p.forkee?.html_url || `https://github.com/${repo}`;
+    case 'ReleaseEvent': return p.release?.html_url || `https://github.com/${repo}/releases`;
+    case 'CommitCommentEvent': return p.comment?.html_url || `https://github.com/${repo}`;
+    default: return `https://github.com/${repo}`;
   }
 }
 
-async function fetchAll() {
-  const headers = { 'Accept': 'application/vnd.github+json' };
-  const [user, events, repos] = await Promise.all([
-    fetch(API, {headers}).then(r=>r.json()),
-    fetch(`${API}/events/public?per_page=100`, {headers}).then(r=>r.json()),
-    fetch(`${API}/repos?per_page=100&sort=updated`, {headers}).then(r=>r.json()),
-  ]);
-  return { user, events, repos };
+function evSummary(e) {
+  const repo = (e.repo?.name || '').split('/').pop();
+  const p = e.payload || {};
+
+  if (e.type === 'PushEvent') {
+    const cs = p.commits || [];
+    if (!cs.length) return { title: `Pushed to <b>${esc(repo)}</b>`, body: '', badge: null };
+    const commitLines = cs.slice(0,5).map(c => {
+      const msg = (c.message||'').split('\n')[0].slice(0,80);
+      const sha = (c.id||'').slice(0,7);
+      return `<li><code>${esc(sha)}</code> ${esc(msg)}</li>`;
+    }).join('');
+    const extra = cs.length > 5 ? `<li>... and ${cs.length - 5} more</li>` : '';
+    return {
+      title: `Pushed <b>${cs.length}</b> commit${cs.length>1?'s':''} to <b>${esc(repo)}</b>`,
+      body: `<ul style="margin:.3rem 0 0;padding-left:1.2rem">${commitLines}${extra}</ul>`,
+      badge: null
+    };
+  }
+
+  if (e.type === 'PullRequestEvent') {
+    const pr = p.pull_request || {};
+    const num = pr.number || '?';
+    const title = pr.title || '?';
+    const body = (pr.body || '').slice(0,200);
+    const action = p.action || '?';
+    const merged = pr.merged;
+    if (action === 'opened')
+      return { title: `🔀 Opened PR <b>#${esc(num)}</b> on <b>${esc(repo)}</b>: ${esc(title)}`, body: body ? `<p style="margin:.3rem 0 0;color:var(--text2);font-size:.78rem">${esc(body)}</p>` : '', badge: 'open' };
+    if (action === 'closed' && merged)
+      return { title: `✅ Merged PR <b>#${esc(num)}</b> on <b>${esc(repo)}</b>: ${esc(title)}`, body: '', badge: 'merged' };
+    if (action === 'closed')
+      return { title: `❌ Closed PR <b>#${esc(num)}</b> on <b>${esc(repo)}</b>: ${esc(title)}`, body: '', badge: 'closed' };
+    if (merged)
+      return { title: `✅ Merged PR <b>#${esc(num)}</b> on <b>${esc(repo)}</b>: ${esc(title)}`, body: '', badge: 'merged' };
+    return { title: `PR <b>#${esc(num)}</b> [${esc(action)}] on <b>${esc(repo)}</b>: ${esc(title)}`, body: '', badge: null };
+  }
+
+  if (e.type === 'PullRequestReviewEvent') {
+    const rev = p.review || {};
+    const state = rev.state || '?';
+    const body = (rev.body || '').slice(0,200);
+    const prUrl = rev.pull_request_url || '';
+    const prNum = prUrl.split('/').pop() || '?';
+    const stateMap = {approved:'✅ Approved',changes_requested:'🔴 Changes requested',commented:'💬 Commented',dismissed:'🚫 Dismissed'};
+    return {
+      title: `${stateMap[state] || state} PR <b>#${esc(prNum)}</b> on <b>${esc(repo)}</b>`,
+      body: body ? `<p style="margin:.3rem 0 0;color:var(--text2);font-size:.78rem">${esc(body)}</p>` : '',
+      badge: 'review'
+    };
+  }
+
+  if (e.type === 'IssuesEvent') {
+    const issue = p.issue || {};
+    const num = issue.number || '?';
+    const title = issue.title || '?';
+    const body = (issue.body || '').slice(0,200);
+    const action = (p.action || '?').charAt(0).toUpperCase() + (p.action || '?').slice(1);
+    return {
+      title: `🐛 ${esc(action)} issue <b>#${esc(num)}</b> on <b>${esc(repo)}</b>: ${esc(title)}`,
+      body: body ? `<p style="margin:.3rem 0 0;color:var(--text2);font-size:.78rem">${esc(body)}</p>` : '',
+      badge: action === 'Opened' ? 'open' : action === 'Closed' ? 'closed' : null
+    };
+  }
+
+  if (e.type === 'IssueCommentEvent') {
+    const comment = p.comment || {};
+    const body = (comment.body || '').slice(0,200);
+    const issue = p.issue || {};
+    const num = issue.number || '?';
+    const title = issue.title || '';
+    return {
+      title: `💬 Commented on issue <b>#${esc(num)}</b> on <b>${esc(repo)}</b>: ${esc(title)}`,
+      body: body ? `<p style="margin:.3rem 0 0;color:var(--text2);font-size:.78rem">${esc(body)}</p>` : '',
+      badge: 'review'
+    };
+  }
+
+  if (e.type === 'CreateEvent') {
+    return { title: `🌱 Created ${esc(p.ref_type||'resource')} <b>${esc(p.ref||'?')}</b> in <b>${esc(repo)}</b>`, body: '', badge: null };
+  }
+
+  if (e.type === 'ForkEvent') {
+    const fname = p.forkee?.full_name || '?';
+    return { title: `🍴 Forked <b>${esc(repo)}</b> → <b>${esc(fname)}</b>`, body: '', badge: null };
+  }
+
+  if (e.type === 'WatchEvent') {
+    return { title: `⭐ Starred <b>${esc(repo)}</b>`, body: '', badge: null };
+  }
+
+  if (e.type === 'ReleaseEvent') {
+    const tag = p.release?.tag_name || '?';
+    const name = p.release?.name || '';
+    return { title: `🚀 Released <b>${esc(tag)}</b> ${esc(name)} on <b>${esc(repo)}</b>`, body: '', badge: null };
+  }
+
+  if (e.type === 'CommitCommentEvent') {
+    const body = (p.comment?.body || '').slice(0,200);
+    return { title: `💬 Commented on commit in <b>${esc(repo)}</b>`, body: body ? `<p style="margin:.3rem 0 0;color:var(--text2);font-size:.78rem">${esc(body)}</p>` : '', badge: null };
+  }
+
+  return { title: `${icon(e.type)} ${esc(e.type)} on <b>${esc(repo)}</b>`, body: '', badge: null };
+}
+
+/* ── filter logic ── */
+const FILTER_MAP = {
+  all: null,
+  pr: ['PullRequestEvent'],
+  issue: ['IssuesEvent', 'IssueCommentEvent'],
+  commit: ['PushEvent'],
+  review: ['PullRequestReviewEvent', 'CommitCommentEvent'],
+  fork: ['ForkEvent'],
+  star: ['WatchEvent'],
+  release: ['ReleaseEvent'],
+};
+
+let allEvents = [];
+let currentFilter = 'all';
+
+function applyFilter(events, filter) {
+  const allowed = FILTER_MAP[filter];
+  if (!allowed) return events;
+  return events.filter(e => allowed.includes(e.type));
+}
+
+function filterCounts(events) {
+  const counts = {all: events.length, pr: 0, issue: 0, commit: 0, review: 0, fork: 0, star: 0, release: 0};
+  events.forEach(e => {
+    if (['PullRequestEvent'].includes(e.type)) counts.pr++;
+    if (['IssuesEvent', 'IssueCommentEvent'].includes(e.type)) counts.issue++;
+    if (['PushEvent'].includes(e.type)) counts.commit++;
+    if (['PullRequestReviewEvent', 'CommitCommentEvent'].includes(e.type)) counts.review++;
+    if (['ForkEvent'].includes(e.type)) counts.fork++;
+    if (['WatchEvent'].includes(e.type)) counts.star++;
+    if (['ReleaseEvent'].includes(e.type)) counts.release++;
+  });
+  return counts;
+}
+
+/* ── render ── */
+function renderEvents(events) {
+  const list = document.getElementById('events-list');
+  if (!events.length) {
+    list.innerHTML = '<div style="padding:2rem;text-align:center;color:var(--text2)">No activity for this filter ✨</div>';
+    return;
+  }
+  list.innerHTML = events.slice(0,60).map((e, i) => {
+    const { title, body, badge } = evSummary(e);
+    const url = evUrl(e);
+    const time = timeAgo(e.created_at);
+    const badgeHtml = badge ? `<span class="event-badge badge-${badge}">${badge}</span>` : '';
+    return `<a href="${esc(url)}" target="_blank" class="event-item" style="animation-delay:${i*40}ms">
+      <span class="event-icon">${icon(e.type)}</span>
+      <div class="event-content">
+        <div class="event-title">${title} ${badgeHtml}</div>
+        ${body}
+        <div class="event-meta">
+          <span>${time}</span>
+          <a href="${esc(url)}" target="_blank">View on GitHub →</a>
+        </div>
+      </div>
+    </a>`;
+  }).join('');
+}
+
+function renderFilters(events) {
+  const counts = filterCounts(events);
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    const f = btn.dataset.filter;
+    const cnt = document.getElementById(`count-${f}`);
+    if (cnt) cnt.textContent = counts[f] || '';
+  });
+}
+
+function renderStats(events) {
+  const commits = events.filter(e=>e.type==='PushEvent').reduce((s,e)=>s+(e.payload?.commits||[]).length,0);
+  const prsOpened = events.filter(e=>e.type==='PullRequestEvent'&&e.payload?.action==='opened').length;
+  const prsMerged = events.filter(e=>e.type==='PullRequestEvent'&&e.payload?.pull_request?.merged).length;
+  const reviews = events.filter(e=>e.type==='PullRequestReviewEvent').length;
+  const issuesOpened = events.filter(e=>e.type==='IssuesEvent'&&e.payload?.action==='opened').length;
+  const forks = events.filter(e=>e.type==='ForkEvent').length;
+  const stars = events.filter(e=>e.type==='WatchEvent').length;
+  const repos = new Set(events.map(e=>e.repo?.name)).size;
+
+  const stats = [
+    [commits, 'Commits', 'var(--green)'],
+    [prsOpened, 'PRs Opened', 'var(--blue)'],
+    [prsMerged, 'PRs Merged', 'var(--accent)'],
+    [reviews, 'Reviews', 'var(--yellow)'],
+    [issuesOpened, 'Issues', 'var(--red)'],
+    [forks, 'Forks', 'var(--text2)'],
+    [stars, 'Stars', 'var(--yellow)'],
+    [repos, 'Active Repos', 'var(--accent2)'],
+  ];
+  document.getElementById('activity-stats').innerHTML = stats.map(([v,l,c]) =>
+    `<div class="stat-card" style="border-color:${c}"><div class="stat-value" style="color:${c}">${v}</div><div class="stat-label">${l}</div></div>`
+  ).join('');
 }
 
 function renderProfileStats(user) {
@@ -318,45 +562,16 @@ function renderProfileStats(user) {
   ).join('');
 }
 
-function renderActivityStats(events) {
-  const commits = events.filter(e=>e.type==='PushEvent').reduce((s,e)=>s+(e.payload.commits||[]).length,0);
-  const prsOpened = events.filter(e=>e.type==='PullRequestEvent'&&e.payload.action==='opened').length;
-  const prsMerged = events.filter(e=>e.type==='PullRequestEvent'&&e.payload.pull_request?.merged).length;
-  const reviews = events.filter(e=>e.type==='PullRequestReviewEvent').length;
-  const repos = new Set(events.map(e=>e.repo.name)).size;
-  const stats = [
-    [commits, 'Commits', 'var(--green)'],
-    [prsOpened, 'PRs Opened', 'var(--blue)'],
-    [prsMerged, 'PRs Merged', 'var(--accent)'],
-    [reviews, 'Reviews', 'var(--yellow)'],
-    [repos, 'Active Repos', 'var(--red)'],
-  ];
-  document.getElementById('activity-stats').innerHTML = stats.map(([v,l,c]) =>
-    `<div class="stat-card" style="border-color:${c}"><div class="stat-value" style="color:${c}">${v}</div><div class="stat-label">${l}</div></div>`
-  ).join('');
-}
-
-function renderEvents(events) {
-  const html = events.slice(0,50).map((e,i) =>
-    `<div class="event-item" style="animation-delay:${i*30}ms">
-      <span class="event-icon">${eventIcon(e.type)}</span>
-      <span class="event-desc">${eventDesc(e)}</span>
-      <span class="event-time">${timeAgo(e.created_at)}</span>
-    </div>`
-  ).join('');
-  document.getElementById('events-list').innerHTML = html;
-}
-
 function renderRepoBars(events) {
   const counts = {};
-  events.forEach(e => { const r = (e.repo.name||'').split('/').pop(); counts[r]=(counts[r]||0)+1; });
+  events.forEach(e => { const r = (e.repo?.name||'').split('/').pop(); counts[r]=(counts[r]||0)+1; });
   const sorted = Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,10);
   const max = Math.max(...sorted.map(x=>x[1]),1);
   document.getElementById('repo-bars').innerHTML = sorted.map(([name,count],i) => {
     const color = COLORS[i % COLORS.length];
     const w = (count/max)*100;
     return `<div class="repo-bar">
-      <span class="repo-name">${name}</span>
+      <span class="repo-name">${esc(name)}</span>
       <div class="bar-track"><div class="bar-fill" style="width:${w}%;background:${color}"></div></div>
       <span class="repo-count">${count}</span>
     </div>`;
@@ -369,36 +584,54 @@ function renderRepos(repos) {
     const color = COLORS[i % COLORS.length];
     return `<a href="${r.html_url}" class="repo-card" target="_blank">
       <div class="repo-card-header">
-        <span class="repo-card-name">${r.name}</span>
-        <span class="repo-card-lang" style="color:${color}">${r.language||''}</span>
+        <span class="repo-card-name">${esc(r.name)}</span>
+        <span class="repo-card-lang" style="color:${color}">${esc(r.language||'')}</span>
       </div>
-      <p class="repo-card-desc">${(r.description||'').slice(0,80)}</p>
+      <p class="repo-card-desc">${esc((r.description||'').slice(0,80))}</p>
       <div class="repo-card-stats"><span>⭐ ${r.stargazers_count||0}</span><span>🍴 ${r.forks_count||0}</span></div>
     </a>`;
   }).join('');
 }
 
+/* ── main ── */
 async function main() {
   try {
-    const { user, events, repos } = await fetchAll();
+    const headers = { 'Accept': 'application/vnd.github+json' };
+    const [user, events, repos] = await Promise.all([
+      fetch(API, {headers}).then(r=>r.json()),
+      fetch(`${API}/events/public?per_page=100`, {headers}).then(r=>r.json()),
+      fetch(`${API}/repos?per_page=100&sort=updated`, {headers}).then(r=>r.json()),
+    ]);
 
     if (!user.login) throw new Error(user.message || 'User not found');
 
-    // Fill header
+    allEvents = events;
+
+    // Header
     document.getElementById('avatar').src = user.avatar_url;
     document.getElementById('name').textContent = user.name || 'Andy Holst';
     document.getElementById('handle').innerHTML = `<span class="live-dot"></span><span class="live-label">LIVE</span> @${user.login} · ${user.location||'Sweden'}`;
     document.getElementById('bio').textContent = user.bio || 'DevSecOps Software Engineer & Business Owner';
 
     renderProfileStats(user);
-    renderActivityStats(events);
+    renderStats(events);
+    renderFilters(events);
     renderEvents(events);
     renderRepoBars(events);
     renderRepos(repos);
 
     document.getElementById('refreshed-at').textContent = new Date().toLocaleString();
 
-    // Show content
+    // Filter buttons
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentFilter = btn.dataset.filter;
+        renderEvents(applyFilter(allEvents, currentFilter));
+      });
+    });
+
     document.getElementById('loading').style.display = 'none';
     document.getElementById('content').style.display = 'block';
 

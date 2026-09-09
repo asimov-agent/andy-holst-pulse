@@ -1,0 +1,2 @@
+# Runtime dependencies (minimal — stdlib only for core)
+# No external runtime deps needed for the page itself

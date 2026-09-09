@@ -1,4 +1,5 @@
-name: Daily GitHub Pulse Post
+name: Daily Pulse Post
+
 on:
   schedule:
     - cron: '0 9 * * *'  # 9 AM UTC daily
@@ -9,49 +10,32 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      
+      - name: Install deps
+        run: pip install -r requirements.txt
       - name: Generate pulse post
-        id: pulse
-        run: |
-          python scripts/andy_github_daily.py > post.txt
-          echo "length=$(wc -c < post.txt)" >> $GITHUB_OUTPUT
+        run: python scripts/daily_pulse.py --dry-run
+        env:
+          PYTHONPATH: src
       
-      - name: Display post (dry run check)
-        run: cat post.txt
-      
-      # Post to X (Twitter) — uncomment after adding secrets
+      # Post to X (uncomment after adding secrets)
       # - name: Post to X
-      #   if: steps.pulse.outputs.length > 100
-      #   run: |
-      #     pip install tweepy
-      #     python scripts/post_to_x.py "$(cat post.txt)"
+      #   run: python scripts/daily_pulse.py --platform x
       #   env:
+      #     PYTHONPATH: src
       #     X_API_KEY: ${{ secrets.X_API_KEY }}
       #     X_API_SECRET: ${{ secrets.X_API_SECRET }}
       #     X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
       #     X_ACCESS_SECRET: ${{ secrets.X_ACCESS_SECRET }}
       #     X_BEARER_TOKEN: ${{ secrets.X_BEARER_TOKEN }}
       
-      # Post to LinkedIn — uncomment after adding secrets
+      # Post to LinkedIn (uncomment after adding secrets)
       # - name: Post to LinkedIn
-      #   if: steps.pulse.outputs.length > 100
-      #   run: |
-      #     python scripts/post_to_linkedin.py "$(cat post.txt)"
+      #   run: python scripts/daily_pulse.py --platform linkedin
       #   env:
+      #     PYTHONPATH: src
       #     LINKEDIN_CLIENT_ID: ${{ secrets.LINKEDIN_CLIENT_ID }}
       #     LINKEDIN_CLIENT_SECRET: ${{ secrets.LINKEDIN_CLIENT_SECRET }}
       #     LINKEDIN_ACCESS_TOKEN: ${{ secrets.LINKEDIN_ACCESS_TOKEN }}
-      
-      - name: Commit post log
-        run: |
-          mkdir -p logs
-          cp post.txt "logs/$(date +%Y-%m-%d).txt"
-          git config user.name "github-actions"
-          git config user.email "actions@github.com"
-          git add logs/
-          git diff --cached --quiet || git commit -m "log: daily pulse $(date +%Y-%m-%d)"
-          git push
