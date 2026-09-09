@@ -31,26 +31,20 @@ body {
 }
 .container { max-width: 1200px; margin: 0 auto; padding: 2rem 1.5rem; }
 
-/* ── Loading ── */
+/* Loading */
 .loading {
   display:flex; flex-direction:column; align-items:center; justify-content:center;
   min-height:60vh; gap:1.5rem;
 }
 .spinner {
   width:48px; height:48px; border:4px solid var(--border);
-  border-top-color: var(--accent); border-radius:50%;
-  animation: spin .8s linear infinite;
+  border-top-color:var(--accent); border-radius:50%;
+  animation:spin .8s linear infinite;
 }
-@keyframes spin { to { transform: rotate(360deg); } }
-.loading-text { color: var(--text2); font-size:.9rem; }
+@keyframes spin { to { transform:rotate(360deg) } }
+.loading-text { color:var(--text2); font-size:.9rem; }
 
-/* ── Error ── */
-.error-box {
-  background: var(--surface); border:1px solid var(--red);
-  border-radius: var(--radius); padding:2rem; text-align:center;
-}
-
-/* ── Header ── */
+/* Header */
 .header {
   display:flex; align-items:center; gap:1.5rem;
   margin-bottom:2rem; padding-bottom:2rem;
@@ -72,13 +66,26 @@ body {
 .live-dot {
   display:inline-block; width:8px; height:8px;
   background:var(--green); border-radius:50%;
-  animation: pulse 2s ease-in-out infinite;
-  margin-right:6px;
+  animation:pulse 2s ease-in-out infinite; margin-right:6px;
 }
 @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
 .live-label { font-size:.7rem; color:var(--green); text-transform:uppercase; letter-spacing:1px; }
 
-/* ── Filter Buttons ── */
+/* Stats */
+.stats-row {
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
+  gap:1rem; margin-bottom:2rem;
+}
+.stat-card {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--radius); padding:1rem; text-align:center;
+  transition:transform .2s, border-color .2s;
+}
+.stat-card:hover { transform:translateY(-2px); border-color:var(--accent); }
+.stat-value { font-size:1.5rem; font-weight:700; color:var(--accent2); }
+.stat-label { font-size:.7rem; color:var(--text2); text-transform:uppercase; letter-spacing:.5px; }
+
+/* Filters */
 .filters {
   display:flex; flex-wrap:wrap; gap:.5rem;
   margin-bottom:2rem; padding-bottom:1rem;
@@ -92,32 +99,12 @@ body {
   cursor:pointer; transition:all .2s;
 }
 .filter-btn:hover { border-color:var(--accent); color:var(--text); }
-.filter-btn.active {
-  background:var(--accent); color:#fff;
-  border-color:var(--accent);
-}
-.filter-btn .count {
-  display:inline-block; margin-left:4px;
-  font-size:.7rem; opacity:.8;
-}
+.filter-btn.active { background:var(--accent); color:#fff; border-color:var(--accent); }
+.filter-btn .count { display:inline-block; margin-left:4px; font-size:.7rem; opacity:.8; }
 
-/* ── Stats Grid ── */
-.stats-row {
-  display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr));
-  gap:1rem; margin-bottom:2rem;
-}
-.stat-card {
-  background:var(--surface); border:1px solid var(--border);
-  border-radius:var(--radius); padding:1rem; text-align:center;
-  transition:transform .2s, border-color .2s;
-}
-.stat-card:hover { transform:translateY(-2px); border-color:var(--accent); }
-.stat-value { font-size:1.6rem; font-weight:700; color:var(--accent2); }
-.stat-label { font-size:.7rem; color:var(--text2); text-transform:uppercase; letter-spacing:.5px; }
-
-/* ── Two-column layout ── */
+/* Grid */
 .grid { display:grid; grid-template-columns:1.4fr 1fr; gap:1.5rem; margin-bottom:2rem; }
-@media (max-width: 900px) { .grid { grid-template-columns:1fr; } }
+@media (max-width:900px) { .grid { grid-template-columns:1fr } }
 
 .section {
   background:var(--surface); border:1px solid var(--border);
@@ -128,53 +115,60 @@ body {
   display:flex; align-items:center; gap:.5rem;
 }
 
-/* ── Activity Feed ── */
+/* Activity Feed */
 .events-list { max-height:700px; overflow-y:auto; }
-.event-item {
-  display:flex; align-items:flex-start; gap:.75rem;
-  padding:.85rem 0; border-bottom:1px solid var(--border);
-  font-size:.85rem; text-decoration:none; color:inherit;
-  transition:background .15s;
-  border-radius:8px;
+.event-card {
+  display:block; padding:1rem;
+  border-bottom:1px solid var(--border);
+  text-decoration:none; color:inherit;
+  border-radius:8px; transition:background .15s;
+  cursor:pointer;
 }
-.event-item:last-child { border-bottom:none; }
-.event-item:hover { background:var(--surface2); }
-.event-icon { font-size:1.2rem; flex-shrink:0; margin-top:2px; }
-.event-content { flex:1; min-width:0; }
-.event-title {
-  color:var(--text); font-weight:500;
-  display:flex; align-items:center; gap:.5rem;
-  word-break:break-word;
+.event-card:last-child { border-bottom:none; }
+.event-card:hover { background:var(--surface2); }
+.event-header {
+  display:flex; align-items:center; gap:.75rem;
+  font-size:.9rem; font-weight:500;
 }
+.event-icon { font-size:1.2rem; flex-shrink:0; }
+.event-title { flex:1; color:var(--text); }
 .event-title code {
   background:var(--surface2); padding:2px 6px; border-radius:4px;
   font-size:.75rem; font-family:'JetBrains Mono',monospace;
   color:var(--accent2);
 }
-.event-body {
-  color:var(--text2); font-size:.78rem; margin-top:.3rem;
-  line-height:1.4; overflow:hidden;
-  display:-webkit-box; -webkit-line-clamp:3;
-  -webkit-box-orient:vertical;
-}
 .event-meta {
-  display:flex; align-items:center; gap:.75rem; margin-top:.4rem;
-  font-size:.72rem; color:var(--text2);
-  font-family:'JetBrains Mono',monospace;
+  display:flex; align-items:center; gap:.75rem; margin-top:.5rem;
+  font-size:.75rem; color:var(--text2);
 }
-.event-meta a { color:var(--accent2); text-decoration:none; }
-.event-meta a:hover { text-decoration:underline; }
 .event-badge {
   display:inline-block; padding:2px 8px; border-radius:99px;
   font-size:.68rem; font-weight:600; text-transform:uppercase;
-  letter-spacing:.3px;
 }
 .badge-open { background:rgba(0,184,148,.15); color:var(--green); }
 .badge-merged { background:rgba(108,92,231,.15); color:var(--accent2); }
 .badge-closed { background:rgba(255,107,107,.15); color:var(--red); }
 .badge-review { background:rgba(116,185,255,.15); color:var(--blue); }
+.event-body {
+  color:var(--text2); font-size:.8rem; margin-top:.5rem;
+  line-height:1.5; overflow:hidden;
+  display:-webkit-box; -webkit-line-clamp:3;
+  -webkit-box-orient:vertical;
+}
+.event-body ul { margin:.3rem 0 0; padding-left:1.2rem; }
+.event-body li { margin-bottom:.15rem; }
+.event-footer {
+  display:flex; align-items:center; gap:1rem; margin-top:.6rem;
+  font-size:.72rem; color:var(--text2);
+  font-family:'JetBrains Mono',monospace;
+}
+.event-link {
+  color:var(--accent2); text-decoration:none;
+  display:inline-flex; align-items:center; gap:.3rem;
+}
+.event-link:hover { text-decoration:underline; }
 
-/* ── Repo bars ── */
+/* Repo bars */
 .repo-bar {
   display:flex; align-items:center; gap:.75rem;
   margin-bottom:.6rem; font-size:.8rem;
@@ -184,7 +178,7 @@ body {
 .bar-fill { height:100%; border-radius:4px; transition:width .5s ease; }
 .repo-count { width:25px; text-align:right; color:var(--text2); font-family:'JetBrains Mono',monospace; font-size:.75rem; }
 
-/* ── Repo cards ── */
+/* Repo cards */
 .repos-grid {
   display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
   gap:1rem; margin-bottom:2rem;
@@ -205,7 +199,7 @@ body {
 .repo-card-desc { font-size:.75rem; color:var(--text2); margin-bottom:.75rem; line-height:1.4; }
 .repo-card-stats { display:flex; gap:1rem; font-size:.75rem; color:var(--text2); }
 
-/* ── Footer ── */
+/* Footer */
 .footer {
   text-align:center; padding:2rem 0; color:var(--text2);
   font-size:.8rem; border-top:1px solid var(--border); margin-top:2rem;
@@ -213,14 +207,14 @@ body {
 .footer a { color:var(--accent2); text-decoration:none; }
 .footer a:hover { text-decoration:underline; }
 
-/* ── Scrollbar ── */
+/* Scrollbar */
 ::-webkit-scrollbar { width:6px; }
 ::-webkit-scrollbar-track { background:var(--surface); }
 ::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
 
-/* ── Animations ── */
-@keyframes fadeUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
-.event-item { animation: fadeUp .3s ease both; }
+/* Animation */
+@keyframes fadeUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+.event-card { animation: fadeUp .25s ease both; }
 </style>
 </head>
 <body>
@@ -233,7 +227,7 @@ body {
 </div>
 
 <!-- Error -->
-<div id="error" class="error-box" style="display:none">
+<div id="error" class="error-box" style="display:none; padding:2rem; text-align:center;">
   <h2>⚠️ Could not load GitHub data</h2>
   <p id="error-msg" style="color:var(--text2);margin-top:.5rem"></p>
   <button onclick="location.reload()" style="background:var(--accent);color:#fff;border:none;padding:.5rem 1.5rem;border-radius:8px;cursor:pointer;font-size:.9rem;margin-top:1rem">Retry</button>
@@ -260,31 +254,25 @@ body {
 
   <!-- Filters -->
   <div class="filters" id="filters">
-    <button class="filter-btn active" data-filter="all">All<span class="count" id="count-all"></span></button>
-    <button class="filter-btn" data-filter="pr">🔀 PRs<span class="count" id="count-pr"></span></button>
-    <button class="filter-btn" data-filter="issue">🐛 Issues<span class="count" id="count-issue"></span></button>
-    <button class="filter-btn" data-filter="commit">📦 Commits<span class="count" id="count-commit"></span></button>
-    <button class="filter-btn" data-filter="review">👀 Reviews<span class="count" id="count-review"></span></button>
-    <button class="filter-btn" data-filter="fork">🍴 Forks<span class="count" id="count-fork"></span></button>
-    <button class="filter-btn" data-filter="star">⭐ Stars<span class="count" id="count-star"></span></button>
-    <button class="filter-btn" data-filter="release">🚀 Releases<span class="count" id="count-release"></span></button>
+    <button class="filter-btn active" data-filter="all">All <span class="count" id="count-all"></span></button>
+    <button class="filter-btn" data-filter="pr">🔀 PRs <span class="count" id="count-pr"></span></button>
+    <button class="filter-btn" data-filter="issue">🐛 Issues <span class="count" id="count-issue"></span></button>
+    <button class="filter-btn" data-filter="commit">📦 Commits <span class="count" id="count-commit"></span></button>
+    <button class="filter-btn" data-filter="review">👀 Reviews <span class="count" id="count-review"></span></button>
+    <button class="filter-btn" data-filter="fork">🍴 Forks <span class="count" id="count-fork"></span></button>
+    <button class="filter-btn" data-filter="star">⭐ Stars <span class="count" id="count-star"></span></button>
+    <button class="filter-btn" data-filter="release">🚀 Releases <span class="count" id="count-release"></span></button>
   </div>
 
   <!-- Main grid -->
   <div class="grid">
-    <!-- Activity Feed -->
     <div class="section">
       <div class="section-title">⚡ Recent Activity</div>
       <div class="events-list" id="events-list"></div>
     </div>
-
-    <!-- Sidebar -->
-    <div>
-      <!-- Top repos -->
-      <div class="section">
-        <div class="section-title">📊 Top Active Repos</div>
-        <div id="repo-bars"></div>
-      </div>
+    <div class="section">
+      <div class="section-title">📊 Top Active Repos</div>
+      <div id="repo-bars"></div>
     </div>
   </div>
 
@@ -313,7 +301,7 @@ const USER = 'andyholst';
 const API = `https://api.github.com/users/${USER}`;
 const COLORS = ['#ff6b6b','#4ecdc4','#45b7d1','#96ceb4','#ffeaa7','#dfe6e9','#fd79a8','#a29bfe','#6c5ce7','#00b894','#e17055','#fdcb6e','#e84393','#00cec9','#fab1a0'];
 
-/* ── helpers ── */
+/* helpers */
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const timeAgo = dt => {
   const d = (Date.now() - new Date(dt)) / 1000;
@@ -324,7 +312,7 @@ const timeAgo = dt => {
 };
 const icon = t => ({PushEvent:'📦',PullRequestEvent:'🔀',PullRequestReviewEvent:'👀',CreateEvent:'🌱',ForkEvent:'🍴',WatchEvent:'⭐',IssueCommentEvent:'💬',IssuesEvent:'🐛',ReleaseEvent:'🚀',DeleteEvent:'🗑️',CommitCommentEvent:'💬',GollumEvent:'📖'}[t]||'✨');
 
-/* ── event → link + summary ── */
+/* event → GitHub URL */
 function evUrl(e) {
   const repo = e.repo?.name || '';
   const p = e.payload || {};
@@ -350,23 +338,25 @@ function evUrl(e) {
   }
 }
 
-function evSummary(e) {
+/* event → {title, body, badge, linkLabel} */
+function evCard(e) {
   const repo = (e.repo?.name || '').split('/').pop();
   const p = e.payload || {};
 
   if (e.type === 'PushEvent') {
     const cs = p.commits || [];
-    if (!cs.length) return { title: `Pushed to <b>${esc(repo)}</b>`, body: '', badge: null };
-    const commitLines = cs.slice(0,5).map(c => {
+    if (!cs.length) return { title: `Pushed to <b>${esc(repo)}</b>`, body: '', badge: null, linkLabel: `github.com/${repo}` };
+    const items = cs.slice(0,5).map(c => {
       const msg = (c.message||'').split('\n')[0].slice(0,80);
       const sha = (c.id||'').slice(0,7);
       return `<li><code>${esc(sha)}</code> ${esc(msg)}</li>`;
     }).join('');
-    const extra = cs.length > 5 ? `<li>... and ${cs.length - 5} more</li>` : '';
+    const extra = cs.length > 5 ? `<li style="color:var(--text2)">...and ${cs.length - 5} more</li>` : '';
     return {
-      title: `Pushed <b>${cs.length}</b> commit${cs.length>1?'s':''} to <b>${esc(repo)}</b>`,
-      body: `<ul style="margin:.3rem 0 0;padding-left:1.2rem">${commitLines}${extra}</ul>`,
-      badge: null
+      title: `📦 Pushed <b>${cs.length}</b> commit${cs.length>1?'s':''} to <b>${esc(repo)}</b>`,
+      body: `<ul style="margin:.4rem 0 0;padding-left:1.2rem">${items}${extra}</ul>`,
+      badge: null,
+      linkLabel: `github.com/${repo}`
     };
   }
 
@@ -378,14 +368,14 @@ function evSummary(e) {
     const action = p.action || '?';
     const merged = pr.merged;
     if (action === 'opened')
-      return { title: `🔀 Opened PR <b>#${esc(num)}</b> on <b>${esc(repo)}</b>: ${esc(title)}`, body: body ? `<p style="margin:.3rem 0 0;color:var(--text2);font-size:.78rem">${esc(body)}</p>` : '', badge: 'open' };
+      return { title: `🔀 Opened PR <b>#${esc(num)}</b> on <b>${esc(repo)}</b>`, body: body ? `<p style="margin:.4rem 0 0;color:var(--text2)">${esc(body)}</p>` : '', badge: 'open', linkLabel: `${repo}/pull/${num}` };
     if (action === 'closed' && merged)
-      return { title: `✅ Merged PR <b>#${esc(num)}</b> on <b>${esc(repo)}</b>: ${esc(title)}`, body: '', badge: 'merged' };
+      return { title: `✅ Merged PR <b>#${esc(num)}</b> on <b>${esc(repo)}</b>`, body: `<p style="margin:.4rem 0 0;font-style:italic">${esc(title)}</p>`, badge: 'merged', linkLabel: `${repo}/pull/${num}` };
     if (action === 'closed')
-      return { title: `❌ Closed PR <b>#${esc(num)}</b> on <b>${esc(repo)}</b>: ${esc(title)}`, body: '', badge: 'closed' };
+      return { title: `❌ Closed PR <b>#${esc(num)}</b> on <b>${esc(repo)}</b>`, body: `<p style="margin:.4rem 0 0;font-style:italic">${esc(title)}</p>`, badge: 'closed', linkLabel: `${repo}/pull/${num}` };
     if (merged)
-      return { title: `✅ Merged PR <b>#${esc(num)}</b> on <b>${esc(repo)}</b>: ${esc(title)}`, body: '', badge: 'merged' };
-    return { title: `PR <b>#${esc(num)}</b> [${esc(action)}] on <b>${esc(repo)}</b>: ${esc(title)}`, body: '', badge: null };
+      return { title: `✅ Merged PR <b>#${esc(num)}</b> on <b>${esc(repo)}</b>`, body: `<p style="margin:.4rem 0 0;font-style:italic">${esc(title)}</p>`, badge: 'merged', linkLabel: `${repo}/pull/${num}` };
+    return { title: `PR <b>#${esc(num)}</b> [${esc(action)}] on <b>${esc(repo)}</b>`, body: `<p style="margin:.4rem 0 0;font-style:italic">${esc(title)}</p>`, badge: null, linkLabel: `${repo}/pull/${num}` };
   }
 
   if (e.type === 'PullRequestReviewEvent') {
@@ -397,8 +387,9 @@ function evSummary(e) {
     const stateMap = {approved:'✅ Approved',changes_requested:'🔴 Changes requested',commented:'💬 Commented',dismissed:'🚫 Dismissed'};
     return {
       title: `${stateMap[state] || state} PR <b>#${esc(prNum)}</b> on <b>${esc(repo)}</b>`,
-      body: body ? `<p style="margin:.3rem 0 0;color:var(--text2);font-size:.78rem">${esc(body)}</p>` : '',
-      badge: 'review'
+      body: body ? `<p style="margin:.4rem 0 0;color:var(--text2)">${esc(body)}</p>` : '',
+      badge: 'review',
+      linkLabel: `${repo}/pull/${prNum}`
     };
   }
 
@@ -409,9 +400,10 @@ function evSummary(e) {
     const body = (issue.body || '').slice(0,200);
     const action = (p.action || '?').charAt(0).toUpperCase() + (p.action || '?').slice(1);
     return {
-      title: `🐛 ${esc(action)} issue <b>#${esc(num)}</b> on <b>${esc(repo)}</b>: ${esc(title)}`,
-      body: body ? `<p style="margin:.3rem 0 0;color:var(--text2);font-size:.78rem">${esc(body)}</p>` : '',
-      badge: action === 'Opened' ? 'open' : action === 'Closed' ? 'closed' : null
+      title: `🐛 ${esc(action)} issue <b>#${esc(num)}</b> on <b>${esc(repo)}</b>`,
+      body: `<p style="margin:.4rem 0 0;font-style:italic">${esc(title)}</p>${body ? `<p style="margin:.3rem 0 0;color:var(--text2)">${esc(body)}</p>` : ''}`,
+      badge: action === 'Opened' ? 'open' : action === 'Closed' ? 'closed' : null,
+      linkLabel: `${repo}/issues/${num}`
     };
   }
 
@@ -422,40 +414,39 @@ function evSummary(e) {
     const num = issue.number || '?';
     const title = issue.title || '';
     return {
-      title: `💬 Commented on issue <b>#${esc(num)}</b> on <b>${esc(repo)}</b>: ${esc(title)}`,
-      body: body ? `<p style="margin:.3rem 0 0;color:var(--text2);font-size:.78rem">${esc(body)}</p>` : '',
-      badge: 'review'
+      title: `💬 Commented on issue <b>#${esc(num)}</b> on <b>${esc(repo)}</b>`,
+      body: `<p style="margin:.4rem 0 0;font-style:italic">${esc(title)}</p>${body ? `<p style="margin:.3rem 0 0;color:var(--text2)">${esc(body)}</p>` : ''}`,
+      badge: 'review',
+      linkLabel: `${repo}/issues/${num}`
     };
   }
 
-  if (e.type === 'CreateEvent') {
-    return { title: `🌱 Created ${esc(p.ref_type||'resource')} <b>${esc(p.ref||'?')}</b> in <b>${esc(repo)}</b>`, body: '', badge: null };
-  }
+  if (e.type === 'CreateEvent')
+    return { title: `🌱 Created ${esc(p.ref_type||'resource')} <b>${esc(p.ref||'?')}</b> in <b>${esc(repo)}</b>`, body: '', badge: null, linkLabel: `github.com/${repo}` };
 
   if (e.type === 'ForkEvent') {
     const fname = p.forkee?.full_name || '?';
-    return { title: `🍴 Forked <b>${esc(repo)}</b> → <b>${esc(fname)}</b>`, body: '', badge: null };
+    return { title: `🍴 Forked <b>${esc(repo)}</b> → <b>${esc(fname)}</b>`, body: '', badge: null, linkLabel: fname };
   }
 
-  if (e.type === 'WatchEvent') {
-    return { title: `⭐ Starred <b>${esc(repo)}</b>`, body: '', badge: null };
-  }
+  if (e.type === 'WatchEvent')
+    return { title: `⭐ Starred <b>${esc(repo)}</b>`, body: '', badge: null, linkLabel: `github.com/${repo}` };
 
   if (e.type === 'ReleaseEvent') {
     const tag = p.release?.tag_name || '?';
     const name = p.release?.name || '';
-    return { title: `🚀 Released <b>${esc(tag)}</b> ${esc(name)} on <b>${esc(repo)}</b>`, body: '', badge: null };
+    return { title: `🚀 Released <b>${esc(tag)}</b> ${esc(name)} on <b>${esc(repo)}</b>`, body: '', badge: null, linkLabel: `${repo}/releases/tag/${tag}` };
   }
 
   if (e.type === 'CommitCommentEvent') {
     const body = (p.comment?.body || '').slice(0,200);
-    return { title: `💬 Commented on commit in <b>${esc(repo)}</b>`, body: body ? `<p style="margin:.3rem 0 0;color:var(--text2);font-size:.78rem">${esc(body)}</p>` : '', badge: null };
+    return { title: `💬 Commented on commit in <b>${esc(repo)}</b>`, body: body ? `<p style="margin:.4rem 0 0;color:var(--text2)">${esc(body)}</p>` : '', badge: null, linkLabel: `github.com/${repo}` };
   }
 
-  return { title: `${icon(e.type)} ${esc(e.type)} on <b>${esc(repo)}</b>`, body: '', badge: null };
+  return { title: `${icon(e.type)} ${esc(e.type)} on <b>${esc(repo)}</b>`, body: '', badge: null, linkLabel: `github.com/${repo}` };
 }
 
-/* ── filter logic ── */
+/* filter */
 const FILTER_MAP = {
   all: null,
   pr: ['PullRequestEvent'],
@@ -466,7 +457,6 @@ const FILTER_MAP = {
   star: ['WatchEvent'],
   release: ['ReleaseEvent'],
 };
-
 let allEvents = [];
 let currentFilter = 'all';
 
@@ -477,20 +467,20 @@ function applyFilter(events, filter) {
 }
 
 function filterCounts(events) {
-  const counts = {all: events.length, pr: 0, issue: 0, commit: 0, review: 0, fork: 0, star: 0, release: 0};
+  const c = {all: events.length, pr: 0, issue: 0, commit: 0, review: 0, fork: 0, star: 0, release: 0};
   events.forEach(e => {
-    if (['PullRequestEvent'].includes(e.type)) counts.pr++;
-    if (['IssuesEvent', 'IssueCommentEvent'].includes(e.type)) counts.issue++;
-    if (['PushEvent'].includes(e.type)) counts.commit++;
-    if (['PullRequestReviewEvent', 'CommitCommentEvent'].includes(e.type)) counts.review++;
-    if (['ForkEvent'].includes(e.type)) counts.fork++;
-    if (['WatchEvent'].includes(e.type)) counts.star++;
-    if (['ReleaseEvent'].includes(e.type)) counts.release++;
+    if (['PullRequestEvent'].includes(e.type)) c.pr++;
+    if (['IssuesEvent','IssueCommentEvent'].includes(e.type)) c.issue++;
+    if (['PushEvent'].includes(e.type)) c.commit++;
+    if (['PullRequestReviewEvent','CommitCommentEvent'].includes(e.type)) c.review++;
+    if (['ForkEvent'].includes(e.type)) c.fork++;
+    if (['WatchEvent'].includes(e.type)) c.star++;
+    if (['ReleaseEvent'].includes(e.type)) c.release++;
   });
-  return counts;
+  return c;
 }
 
-/* ── render ── */
+/* render */
 function renderEvents(events) {
   const list = document.getElementById('events-list');
   if (!events.length) {
@@ -498,19 +488,18 @@ function renderEvents(events) {
     return;
   }
   list.innerHTML = events.slice(0,60).map((e, i) => {
-    const { title, body, badge } = evSummary(e);
+    const card = evCard(e);
     const url = evUrl(e);
     const time = timeAgo(e.created_at);
-    const badgeHtml = badge ? `<span class="event-badge badge-${badge}">${badge}</span>` : '';
-    return `<a href="${esc(url)}" target="_blank" class="event-item" style="animation-delay:${i*40}ms">
-      <span class="event-icon">${icon(e.type)}</span>
-      <div class="event-content">
-        <div class="event-title">${title} ${badgeHtml}</div>
-        ${body}
-        <div class="event-meta">
-          <span>${time}</span>
-          <a href="${esc(url)}" target="_blank">View on GitHub →</a>
-        </div>
+    const badgeHtml = card.badge ? `<span class="event-badge badge-${card.badge}">${card.badge}</span>` : '';
+    return `<a href="${esc(url)}" target="_blank" class="event-card" style="animation-delay:${i*40}ms">
+      <div class="event-header">
+        <span class="event-title">${card.title} ${badgeHtml}</span>
+      </div>
+      ${card.body}
+      <div class="event-footer">
+        <span>🕐 ${time}</span>
+        <span class="event-link">🔗 ${esc(card.linkLabel)} →</span>
       </div>
     </a>`;
   }).join('');
@@ -533,7 +522,7 @@ function renderStats(events) {
   const issuesOpened = events.filter(e=>e.type==='IssuesEvent'&&e.payload?.action==='opened').length;
   const forks = events.filter(e=>e.type==='ForkEvent').length;
   const stars = events.filter(e=>e.type==='WatchEvent').length;
-  const repos = new Set(events.map(e=>e.repo?.name)).size;
+  const repos = new Set(events.map(e=>e.repo?.name)).length;
 
   const stats = [
     [commits, 'Commits', 'var(--green)'],
@@ -593,7 +582,7 @@ function renderRepos(repos) {
   }).join('');
 }
 
-/* ── main ── */
+/* main */
 async function main() {
   try {
     const headers = { 'Accept': 'application/vnd.github+json' };
@@ -604,10 +593,8 @@ async function main() {
     ]);
 
     if (!user.login) throw new Error(user.message || 'User not found');
-
     allEvents = events;
 
-    // Header
     document.getElementById('avatar').src = user.avatar_url;
     document.getElementById('name').textContent = user.name || 'Andy Holst';
     document.getElementById('handle').innerHTML = `<span class="live-dot"></span><span class="live-label">LIVE</span> @${user.login} · ${user.location||'Sweden'}`;
@@ -622,7 +609,6 @@ async function main() {
 
     document.getElementById('refreshed-at').textContent = new Date().toLocaleString();
 
-    // Filter buttons
     document.querySelectorAll('.filter-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
