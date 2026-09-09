@@ -102,6 +102,16 @@ body {
 .filter-btn.active { background:var(--accent); color:#fff; border-color:var(--accent); }
 .filter-btn .count { display:inline-block; margin-left:4px; font-size:.7rem; opacity:.8; }
 
+/* Skip link (accessibility) */
+.skip-link {
+  position:absolute; top:-40px; left:0;
+  background:var(--accent); color:#fff;
+  padding:8px 16px; text-decoration:none;
+  border-radius:0 0 8px 0; z-index:100;
+  transition:top .2s;
+}
+.skip-link:focus { top:0; }
+
 /* Grid */
 .grid { display:grid; grid-template-columns:1.4fr 1fr; gap:1.5rem; margin-bottom:2rem; }
 @media (max-width:900px) { .grid { grid-template-columns:1fr } }
@@ -218,6 +228,7 @@ body {
 </style>
 </head>
 <body>
+<a href="#main-content" class="skip-link">Skip to content</a>
 <div class="container">
 
 <!-- Loading -->
@@ -236,15 +247,17 @@ body {
 <!-- Content -->
 <div id="content" style="display:none">
 
+<main id="main-content">
+
   <!-- Header -->
-  <div class="header">
-    <img id="avatar" class="avatar" src="" alt="">
+  <header class="header">
+    <img id="avatar" class="avatar" src="" alt="Andy Holst GitHub avatar">
     <div class="header-info">
       <h1 id="name"></h1>
-      <div class="handle"><span class="live-dot"></span><span class="live-label">LIVE</span> <span id="handle"></span> · <span id="location"></span></div>
+      <div class="handle"><span class="live-dot" aria-hidden="true"></span><span class="live-label">LIVE</span> <span id="handle"></span> · <span id="location"></span></div>
       <div id="bio" class="bio"></div>
     </div>
-  </div>
+  </header>
 
   <!-- Profile Stats -->
   <div class="stats-row" id="profile-stats"></div>
@@ -253,16 +266,16 @@ body {
   <div class="stats-row" id="activity-stats"></div>
 
   <!-- Filters -->
-  <div class="filters" id="filters">
-    <button class="filter-btn active" data-filter="all">All <span class="count" id="count-all"></span></button>
-    <button class="filter-btn" data-filter="pr">🔀 PRs <span class="count" id="count-pr"></span></button>
-    <button class="filter-btn" data-filter="issue">🐛 Issues <span class="count" id="count-issue"></span></button>
-    <button class="filter-btn" data-filter="commit">📦 Commits <span class="count" id="count-commit"></span></button>
-    <button class="filter-btn" data-filter="review">👀 Reviews <span class="count" id="count-review"></span></button>
-    <button class="filter-btn" data-filter="fork">🍴 Forks <span class="count" id="count-fork"></span></button>
-    <button class="filter-btn" data-filter="star">⭐ Stars <span class="count" id="count-star"></span></button>
-    <button class="filter-btn" data-filter="release">🚀 Releases <span class="count" id="count-release"></span></button>
-  </div>
+  <nav class="filters" id="filters" aria-label="Filter activity by type">
+    <button class="filter-btn active" data-filter="all" aria-pressed="true">All <span class="count" id="count-all"></span></button>
+    <button class="filter-btn" data-filter="pr" aria-pressed="false">🔀 PRs <span class="count" id="count-pr"></span></button>
+    <button class="filter-btn" data-filter="issue" aria-pressed="false">🐛 Issues <span class="count" id="count-issue"></span></button>
+    <button class="filter-btn" data-filter="commit" aria-pressed="false">📦 Commits <span class="count" id="count-commit"></span></button>
+    <button class="filter-btn" data-filter="review" aria-pressed="false">👀 Reviews <span class="count" id="count-review"></span></button>
+    <button class="filter-btn" data-filter="fork" aria-pressed="false">🍴 Forks <span class="count" id="count-fork"></span></button>
+    <button class="filter-btn" data-filter="star" aria-pressed="false">⭐ Stars <span class="count" id="count-star"></span></button>
+    <button class="filter-btn" data-filter="release" aria-pressed="false">🚀 Releases <span class="count" id="count-release"></span></button>
+  </nav>
 
   <!-- Main grid -->
   <div class="grid">
@@ -283,7 +296,7 @@ body {
   </div>
 
   <!-- Footer -->
-  <div class="footer">
+  <footer class="footer">
     <p>🔥 <b>GitHub Pulse</b> for <a href="https://github.com/andyholst">@andyholst</a></p>
     <p style="margin-top:.5rem">
       <a href="https://docondee.com">🌐 docondee.com</a> ·
@@ -291,8 +304,9 @@ body {
       <a href="https://linkedin.com/in/andy-holst-devops-software-engineer">💼 LinkedIn</a>
     </p>
     <p style="margin-top:.75rem;opacity:.6">Refreshed <span id="refreshed-at"></span></p>
-  </div>
+  </footer>
 
+</main>
 </div>
 </div>
 
@@ -611,8 +625,12 @@ async function main() {
 
     document.querySelectorAll('.filter-btn').forEach(btn => {
       btn.addEventListener('click', () => {
-        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.filter-btn').forEach(b => {
+          b.classList.remove('active');
+          b.setAttribute('aria-pressed', 'false');
+        });
         btn.classList.add('active');
+        btn.setAttribute('aria-pressed', 'true');
         currentFilter = btn.dataset.filter;
         renderEvents(applyFilter(allEvents, currentFilter));
       });
