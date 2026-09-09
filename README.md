@@ -70,6 +70,10 @@ ruff check src/ tests/ scripts/
 
 All changes follow: **Issue → Worktree → Branch → PR → Merge**
 
+**Zero exceptions.** No direct pushes to main — ever. Docs, reverts, hotfixes all go through PR.
+
+CI enforces this: [pr-only-main.yml](.github/workflows/pr-only-main.yml) blocks any commit that did not come from a PR merge.
+
 See [AGENTS.md](AGENTS.md) for the full workflow documentation.
 
 ## Setup for posting to social
