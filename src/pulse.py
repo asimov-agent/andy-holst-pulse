@@ -19,6 +19,7 @@ def gh_api(path: str) -> Any:
         capture_output=True,
         text=True,
         timeout=30,
+        check=False,
     )
     try:
         return json.loads(result.stdout)
@@ -261,7 +262,7 @@ def summarize_events(events: list) -> dict:
         "issues_closed": sum(1 for e in events if e["type"] == "IssuesEvent" and e.get("payload", {}).get("action") == "closed"),
         "forks": sum(1 for e in events if e["type"] == "ForkEvent"),
         "stars": sum(1 for e in events if e["type"] == "WatchEvent"),
-        "active_repos": len(set(e.get("repo", {}).get("name", "") for e in events)),
+        "active_repos": len({e.get("repo", {}).get("name", "") for e in events}),
     }
 
 
