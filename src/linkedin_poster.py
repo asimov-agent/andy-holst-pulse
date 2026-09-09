@@ -2,10 +2,10 @@
 
 from __future__ import annotations
 
-import os
 import json
-import urllib.request
+import os
 import urllib.error
+import urllib.request
 from typing import Any
 
 

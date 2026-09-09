@@ -1,8 +1,8 @@
 """Page structure tests — validates index.html has all required elements."""
 
-import pytest
-import re
 from pathlib import Path
+
+import pytest
 
 INDEX_HTML = Path(__file__).parent.parent / "index.html"
 

@@ -2,17 +2,16 @@
 
 from __future__ import annotations
 
-import os
-from typing import Any
-
-import urllib.request
-import urllib.parse
-import urllib.error
-import json
 import base64
 import hashlib
+import json
+import os
 import secrets
 import time
+import urllib.error
+import urllib.parse
+import urllib.request
+from typing import Any
 
 
 class XPoster:
