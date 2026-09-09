@@ -1,6 +1,5 @@
 """Tests for the PR-only workflow enforcement."""
 
-import pytest
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).parent.parent
