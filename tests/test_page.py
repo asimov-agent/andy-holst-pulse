@@ -1,6 +1,5 @@
 """Comprehensive page tests — validates HTML structure, JS logic, and link correctness."""
 
-import pytest
 import re
 from pathlib import Path
 
