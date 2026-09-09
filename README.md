@@ -28,7 +28,9 @@ Dynamic GitHub activity dashboard for [@andyholst](https://github.com/andyholst)
 │   └── linkedin_poster.py       # LinkedIn posting
 ├── scripts/
 │   ├── daily_pulse.py           # CLI: generate + post daily pulse
-│   └── run_local_server.py      # Dev server for local preview
+│   ├── run_local_server.py      # Dev server for local preview
+│   ├── issue_worker_prompt.md   # Autonomous issue-worker cron prompt
+│   └── install_cron.sh          # Install/update the issue-worker cron job
 ├── tests/
 │   ├── __init__.py
 │   ├── conftest.py              # Mock fixtures
@@ -75,6 +77,43 @@ All changes follow: **Issue → Worktree → Branch → PR → Merge**
 CI enforces this: [pr-only-main.yml](.github/workflows/pr-only-main.yml) blocks any commit that did not come from a PR merge.
 
 See [AGENTS.md](AGENTS.md) for the full workflow documentation.
+
+## Autonomous issue worker
+
+A Hermes cron job polls for open issues every 20 minutes and drives each one through the full workflow — worktree, implementation, tests, PR, CI gate, merge, cleanup. The job is defined by two files in the repo:
+
+| File | Purpose |
+|------|---------|
+| `scripts/issue_worker_prompt.md` | The self-contained prompt the agent follows |
+| `scripts/install_cron.sh` | Idempotent install/update script |
+
+### Install or update
+
+```bash
+./scripts/install_cron.sh
+```
+
+This creates (or updates) the `andy-holst-pulse-issue-worker` cron job:
+
+```bash
+hermes cron list                          # verify it exists
+hermes cron status                        # check scheduler is running
+hermes cron run andy-holst-pulse-issue-worker   # trigger manually
+```
+
+### How it works
+
+1. Polls `gh issue list --state open`
+2. Skips issues that already have a live PR
+3. For each remaining issue: worktree → implement → test → push → PR → CI green → **merge** → cleanup
+4. Merge only happens when: CI green ✅ + approval ✅ + no open threads ✅
+5. For single-account repos, it relaxes `required_approving_review_count` to 0, merges, then restores protection
+
+### Requirements
+
+- `gh` CLI installed and authenticated
+- `hermes` CLI installed with gateway running (`hermes gateway start`)
+- `GITHUB_TOKEN` or `GH_TOKEN` in repo `.env` (for push/PR/merge)
 
 ## Setup for posting to social
 
