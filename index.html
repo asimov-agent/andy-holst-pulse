@@ -568,20 +568,20 @@ function renderStats(events) {
   const issuesOpened = events.filter(e=>e.type==='IssuesEvent'&&e.payload?.action==='opened').length;
   const forks = events.filter(e=>e.type==='ForkEvent').length;
   const stars = events.filter(e=>e.type==='WatchEvent').length;
-  const activeRepos = new Set(events.map(e=>e.repo?.name)).size;
+  const activeRepos = new Set(events.map(e => e.repo?.name).filter(Boolean)).size;
 
   const stats = [
-    [commits, 'Commits', 'var(--green)'],
-    [prsOpened, 'PRs Opened', 'var(--blue)'],
-    [prsMerged, 'PRs Merged', 'var(--accent)'],
-    [reviews, 'Reviews', 'var(--yellow)'],
-    [issuesOpened, 'Issues', 'var(--red)'],
-    [forks, 'Forks', 'var(--text2)'],
-    [stars, 'Stars', 'var(--yellow)'],
-    [activeRepos, 'Active Repos', 'var(--accent2)'],
+    [commits, 'Commits', 'var(--green)', `https://github.com/${USER}`],
+    [prsOpened, 'PRs Opened', 'var(--blue)', `https://github.com/${USER}?tab=pulls&state=open`],
+    [prsMerged, 'PRs Merged', 'var(--accent)', `https://github.com/${USER}?tab=pulls&state=closed`],
+    [reviews, 'Reviews', 'var(--yellow)', `https://github.com/${USER}?tab=pulls&state=closed`],
+    [issuesOpened, 'Issues', 'var(--red)', `https://github.com/${USER}?tab=issues`],
+    [forks, 'Forks', 'var(--text2)', `https://github.com/${USER}?tab=repositories&type=fork`],
+    [stars, 'Stars', 'var(--yellow)', `https://github.com/${USER}?tab=stars`],
+    [activeRepos, 'Active Repos', 'var(--accent2)', `https://github.com/${USER}?tab=repositories`],
   ];
-  document.getElementById('activity-stats').innerHTML = stats.map(([v,l,c]) =>
-    `<div class="stat-card" style="border-color:${c}"><div class="stat-value" style="color:${c}">${v}</div><div class="stat-label">${l}</div></div>`
+  document.getElementById('activity-stats').innerHTML = stats.map(([v,l,c,u]) =>
+    `<a href="${esc(u)}" target="_blank" class="stat-card" style="border-color:${c}"><div class="stat-value" style="color:${c}">${v}</div><div class="stat-label">${l}</div></a>`
   ).join('');
 }
 
@@ -639,7 +639,9 @@ async function main() {
     ]);
 
     if (!user.login) throw new Error(user.message || 'User not found');
-    allEvents = events;
+
+    // Deduplicate events by id (GitHub can return duplicates)
+    allEvents = events.filter((e, i, arr) => e.id && arr.findIndex(x => x.id === e.id) === i);
 
     document.getElementById('avatar').src = user.avatar_url;
     document.getElementById('name').textContent = user.name || 'Andy Holst';

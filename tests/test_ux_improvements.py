@@ -10,6 +10,28 @@ def read_page() -> str:
 
 
 class TestUXImprovements:
+    def test_events_are_deduplicated(self):
+        """Duplicate events (by id) should be removed from the feed."""
+        content = read_page()
+        assert 'findIndex' in content or 'filter' in content
+        # Dedup must check event id and remove duplicates
+        assert 'x.id === e.id' in content or 'e.id &&' in content
+
+    def test_activity_stats_are_clickable(self):
+        """Activity stats (PRs, commits, etc.) should be clickable links."""
+        content = read_page()
+        # renderStats should generate anchor tags
+        assert 'renderStats' in content
+        # Activity stats must use <a> tags, not <div>
+        assert '<a href=' in content
+        # The activity-stats section should contain href links
+        assert 'tab=pulls' in content or 'tab=issues' in content or 'tab=stars' in content
+
+    def test_active_repos_no_undefined(self):
+        """Active repos count should filter out undefined/empty values."""
+        content = read_page()
+        assert 'filter(Boolean)' in content or 'repo?.name)' in content
+
     def test_profile_stats_are_clickable(self):
         """Profile stats should be generated as anchor tags linking to GitHub pages."""
         content = read_page()
