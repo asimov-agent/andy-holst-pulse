@@ -1,7 +1,7 @@
 """Tests for the pulse core logic."""
 
 import pytest
-from unittest.mock import patch, MagicMock
+from datetime import datetime, timezone, timedelta
 from src.pulse import (
     time_ago, event_icon, event_url, event_summary,
     filter_events, summarize_events, format_daily_post,
@@ -11,25 +11,21 @@ from src.pulse import (
 
 class TestTimeAgo:
     def test_seconds_ago(self):
-        from datetime import datetime, timezone, timedelta
         dt = (datetime.now(timezone.utc) - timedelta(seconds=30)).isoformat().replace("+00:00", "Z")
         result = time_ago(dt)
         assert "30s ago" in result
 
     def test_minutes_ago(self):
-        from datetime import datetime, timezone, timedelta
         dt = (datetime.now(timezone.utc) - timedelta(minutes=5)).isoformat().replace("+00:00", "Z")
         result = time_ago(dt)
         assert "5m ago" in result
 
     def test_hours_ago(self):
-        from datetime import datetime, timezone, timedelta
         dt = (datetime.now(timezone.utc) - timedelta(hours=3)).isoformat().replace("+00:00", "Z")
         result = time_ago(dt)
         assert "3h ago" in result
 
     def test_days_ago(self):
-        from datetime import datetime, timezone, timedelta
         dt = (datetime.now(timezone.utc) - timedelta(days=2)).isoformat().replace("+00:00", "Z")
         result = time_ago(dt)
         assert "2d ago" in result
