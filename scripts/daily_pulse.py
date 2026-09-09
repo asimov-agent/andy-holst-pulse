@@ -1,16 +1,11 @@
-#!/usr/bin/env python3
 """Generate daily pulse and post to X/LinkedIn."""
 
 from __future__ import annotations
 
 import argparse
-import json
-import os
 import sys
-from datetime import datetime, timezone
 from pathlib import Path
 
-# Add src to path
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 from pulse import format_daily_post, get_events, get_repos, get_user
