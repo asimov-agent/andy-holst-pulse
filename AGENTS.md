@@ -1,150 +1,142 @@
 ---
 name: andy-holst-pulse
-description: "Dynamic GitHub activity dashboard for Andy Holst with deep links, filtering, and strict issue→worktree→PR workflow."
-version: 1.1.0
+description: "Dynamic GitHub activity dashboard for Andy Holst — design-first, strict PR-only workflow."
+version: 2.0.0
 ---
 
 # AGENTS.md — Andy Holst Pulse
 
-Behavior file for agent workflow in this repo. **Follow this on every session.**
+**Follow this on every session. Zero exceptions.**
 
 ## Repo purpose
 
-Dynamic GitHub activity dashboard for [@andyholst](https://github.com/andyholst). Fully client-side — fetches live from GitHub API. Posts daily summaries to X/LinkedIn.
+Dynamic GitHub activity dashboard for [@andyholst](https://github.com/andyholst). Fully client-side — fetches live from GitHub API every page load. No build step, no server.
 
 Live URL: https://asimov-agent.github.io/andy-holst-pulse/
 
 ## Workflow: Issue → Worktree → Branch → PR (MANDATORY)
 
-**NEVER push directly to main. NEVER work on main directly.**
+**NEVER push directly to main. NEVER work on main directly. ZERO EXCEPTIONS.**
 
-Every piece of work MUST follow this pipeline:
+This applies to:
+- Code changes
+- Documentation changes (including this file)
+- Reverts
+- Hotfixes
+- Any commit to the `main` branch
 
 ### 1. Create GitHub Issue FIRST
 
 ```bash
-gh issue create --title "<title>" --body "## Goal\n\n## Acceptance Criteria\n\n## Tasks\n- [ ] "
+gh issue create \
+  --title "<title>" \
+  --body-file /path/to/issue_body.md
 ```
 
-The issue is the root of truth. It describes the goal, acceptance criteria, and task checklist.
+The issue is the root of truth. It describes the goal, design/analysis, acceptance criteria, and task checklist.
 
 ### 2. Create Worktree Branch
 
 ```bash
 cd /Users/andy/repository/git/andy-holst-pulse
 git fetch origin main
-git worktree add -b feat/<kebab-name> ../llama-ai-wt/<kebab-name> origin/main
-cd ../llama-ai-wt/<kebab-name>
+git worktree add -b feat/<kebab-name> ../andy-holst-wt/<kebab-name> origin/main
+cd ../andy-holst-wt/<kebab-name>
 ```
 
-The worktree lives OUTSIDE the main checkout (sibling dir). This allows parallel work without collisions.
+The worktree lives OUTSIDE the main checkout. This allows parallel work without collisions.
 
 ### 3. Implement + Test Inside Worktree
 
-Inside the worktree:
-- Write code
-- Write tests
-- Run `pytest tests/ -v` locally
-- Run `ruff check src/ tests/ scripts/`
-- Commit early and often (at least one unique commit immediately after creating files)
+```bash
+cd ../andy-holst-wt/<kebab-name>
+# Write code + tests
+PYTHONPATH=src:scripts pytest tests/ -v
+ruff check src/ tests/ scripts/
+# Commit early and often
+git add -A && git commit -m "feat: <description>"
+```
 
 ### 4. Push + Open PR
 
 ```bash
-cd ../llama-ai-wt/<kebab-name>
 git push -u origin feat/<kebab-name>
-gh pr create --base main --head feat/<kebab-name> \
-    --title "feat: <kebab-name>" \
-    --body "Completes #<issue_number>.\n\n## Changes\n\n## Test Plan\n- [ ] CI green\n- [ ] All tests pass"
+gh pr create \
+  --base main \
+  --head feat/<kebab-name> \
+  --title "feat: <kebab-name>" \
+  --body "Completes #<issue_number>."
 ```
 
 ### 5. CI Must Be GREEN Before Merge
-
-The PR will only be merged when:
-- CI pipeline passes (lint + test)
-- All tests pass
-- No unresolved review threads
 
 ```bash
 gh pr checks <N>  # verify all green
 ```
 
+Only merge when:
+- CI pipeline passes (lint + test)
+- All tests pass
+- No unresolved review threads
+
 ### 6. Merge + Cleanup
 
 ```bash
 gh pr merge <N> --merge --delete-branch
-git worktree remove ../llama-ai-wt/<kebab-name>
+git worktree remove ../andy-holst-wt/<kebab-name>
 ```
 
-## Must-follow rules
+## Design principles
 
-1. **GitHub-first issue discipline.** Every work item → GitHub issue first → worktree branch → implement → PR. No direct pushes to main.
-2. **Client-side only.** No build step, no bundler, no server. Pure HTML + JS + CSS. GitHub Pages serves `index.html`.
-3. **Real links everywhere.** Every activity item must link to the actual GitHub resource (PR, issue, commit, review).
-4. **Filterable views.** Page must have filter buttons: All, PRs, Issues, Commits, Reviews, Forks, Stars.
-5. **Summary content.** Each activity must show descriptive summary — PR description, issue title/body excerpt, commit messages.
-6. **Deep CI.** Every feature must have tests. CI runs lint + test on every PR.
-7. **Test before claim.** Never report done without real `pytest` + CI green.
-8. **Commit early on worktrees.** Make a first unique commit immediately after creating files, or the auto-cleaner may delete your worktree.
+1. **Client-side only.** Pure HTML + JS + CSS. Zero external JS dependencies.
+2. **Real links everywhere.** Every activity item links to the actual GitHub resource.
+3. **Accessible.** Semantic HTML, ARIA labels, skip-link, keyboard navigable.
+4. **Filterable.** Users can filter by: All, PRs, Issues, Commits, Reviews, Forks, Stars, Releases.
+5. **Self-contained.** The page works standalone — no backend, no API keys needed for viewing.
+
+## Capability: Daily social posting (optional)
+
+The codebase includes poster classes (`XPoster`, `LinkedInPoster`) that enable posting daily activity summaries to X/Twitter and LinkedIn.
+
+This is **design-only until secrets are configured**:
+- The daily-pulse workflow (`.github/workflows/daily-pulse.yml`) exists but has posting steps commented out
+- Posters gracefully skip when API secrets are missing
+- No cron runs until the user enables it by adding repo secrets and uncommenting the workflow
 
 ## Folder structure
 
 ```
-index.html                  # Main page (root for GitHub Pages)
-src/
-  pulse.py                  # GitHub API core + formatting
-  x_poster.py               # X/Twitter poster
-  linkedin_poster.py        # LinkedIn poster
-scripts/
-  daily_pulse.py            # CLI: generate + post
-  run_local_server.py       # Dev server
-tests/
-  conftest.py               # Mock fixtures
-  test_pulse.py             # Core logic tests
-  test_page.py              # Page structure tests
-  test_posters.py           # Poster tests
-specs/changes/              # OpenSpec changes (if applicable)
-.github/workflows/
-  ci.yml                    # Lint + test on PR/push
-  daily-pulse.yml           # Daily social post cron
+index.html                    # Main page (root for GitHub Pages)
+src/pulse.py                  # GitHub API core + formatting
+src/x_poster.py               # X/Twitter poster (optional)
+src/linkedin_poster.py        # LinkedIn poster (optional)
+scripts/daily_pulse.py        # CLI: generate + post (optional)
+tests/test_pulse.py           # Core logic tests
+tests/test_page.py            # Page structure + accessibility tests
+tests/test_posters.py         # Poster tests
+tests/test_daily_pulse.py     # CLI tests
+.github/workflows/ci.yml      # Lint + test on push/PR
+.github/workflows/daily-pulse.yml  # Daily post (disabled without secrets)
+AGENTS.md                     # This file
 ```
 
 ## Testing
 
 ```bash
-pip install -r requirements-dev.txt
-pytest tests/ -v                    # all tests
-pytest tests/test_pulse.py -v       # core logic only
-pytest tests/test_page.py -v        # page structure only
-ruff check src/ tests/ scripts/     # lint
+PYTHONPATH=src:scripts pytest tests/ -v
+ruff check src/ tests/ scripts/
 ```
 
-## CI pipeline
+## Current state
 
-- **ci.yml**: runs on push + PR. Steps: lint → test → build check → page validation
-- **daily-pulse.yml**: 09:00 UTC daily. Generate post → log → post to X/LinkedIn
-
-## Social posting secrets
-
-Set in GitHub repo secrets:
-- `X_API_KEY`, `X_API_SECRET`, `X_ACCESS_TOKEN`, `X_ACCESS_SECRET`, `X_BEARER_TOKEN`
-- `LINKEDIN_CLIENT_ID`, `LINKEDIN_CLIENT_SECRET`, `LINKEDIN_ACCESS_TOKEN`
+- Page: live, dynamic, accessible, filterable
+- Tests: 78 passing
+- CI: green
+- Posting: designed, implemented, tested — but disabled until user adds secrets
 
 ## Conventions
 
-- Python 3.11+, type hints everywhere
+- Python 3.11+, type hints, stdlib preferred
 - Conventional Commits (feat:, fix:, docs:, test:, ci:)
-- No external JS/CDN dependencies on the page (zero-dependency, fully self-contained)
-- All emoji rendered via Unicode (no image dependencies)
-- Every PR must reference the issue it closes
+- Every PR references its issue
 - Every PR must have CI green before merge
-
-## Current Issues to Track
-
-When starting/resuming work, always check open issues:
-
-```bash
-gh issue list --state open
-```
-
-Each open issue must have a worktree + PR in flight. If not, start work on it immediately.

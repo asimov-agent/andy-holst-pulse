@@ -63,7 +63,14 @@ ruff check src/ tests/ scripts/
 ## CI
 
 - **ci.yml** — Runs on every push and PR. Lints with `ruff`, runs full pytest suite.
+- **pr-only-main.yml** — Blocks direct pushes to main. All changes MUST go through PR.
 - **daily-pulse.yml** — Runs at 09:00 UTC daily. Generates pulse, posts to X + LinkedIn, saves log.
+
+## Workflow
+
+All changes follow: **Issue → Worktree → Branch → PR → Merge**
+
+See [AGENTS.md](AGENTS.md) for the full workflow documentation.
 
 ## Setup for posting to social
 
