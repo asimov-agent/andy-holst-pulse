@@ -1,7 +1,5 @@
 """Tests for UX improvements."""
 
-import pytest
-import re
 from pathlib import Path
 
 INDEX_HTML = Path(__file__).parent.parent / "index.html"
