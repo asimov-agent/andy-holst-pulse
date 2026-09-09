@@ -1,61 +1,38 @@
-"""X / Twitter poster."""
+"""X / Twitter poster using OAuth 1.0a via requests."""
 
 from __future__ import annotations
 
-import base64
-import hashlib
-import json
 import os
-import secrets
-import time
-import urllib.error
-import urllib.parse
-import urllib.request
 from typing import Any
+
+import requests
+from requests_oauthlib import OAuth1
 
 
 class XPoster:
-    """Post to X using OAuth 1.0a (application-only with user context)."""
+    """Post to X using OAuth 1.0a via requests."""
 
     def __init__(self) -> None:
         self.api_key = os.environ.get("X_API_KEY", "")
         self.api_secret = os.environ.get("X_API_SECRET", "")
         self.access_token = os.environ.get("X_ACCESS_TOKEN", "")
         self.access_secret = os.environ.get("X_ACCESS_SECRET", "")
-        self.bearer = os.environ.get("X_BEARER_TOKEN", "")
+        self.session = requests.Session()
 
     @property
     def is_configured(self) -> bool:
-        return bool(self.api_key and self.api_secret and self.access_token and self.access_secret)
-
-    def _oauth_sign(self, method: str, url: str, params: dict[str, str]) -> str:
-        """Generate OAuth 1.0a signature."""
-        # Simplified OAuth 1.0a header generation
-        oauth_params = {
-            "oauth_consumer_key": self.api_key,
-            "oauth_nonce": secrets.token_hex(16),
-            "oauth_signature_method": "HMAC-SHA1",
-            "oauth_timestamp": str(int(time.time())),
-            "oauth_token": self.access_token,
-            "oauth_version": "1.0",
-        }
-
-        all_params = {**params, **oauth_params}
-        sorted_params = "&".join(
-            f"{urllib.parse.quote(k)}={urllib.parse.quote(all_params[k])}"
-            for k in sorted(all_params.keys())
+        return bool(
+            self.api_key and self.api_secret and self.access_token and self.access_secret
         )
 
-        base_string = f"{method.upper()}&{urllib.parse.quote(url)}&{urllib.parse.quote(sorted_params)}"
-        signing_key = f"{urllib.parse.quote(self.api_secret)}&{urllib.parse.quote(self.access_secret)}"
-        signature = base64.b64encode(
-            hashlib.pbkdf2_hmac('sha1', base_string.encode(), signing_key.encode(), 1)
-        ).decode()
-
-        oauth_params["oauth_signature"] = signature
-        return "OAuth " + ", ".join(
-            f'{urllib.parse.quote(k)}="{urllib.parse.quote(v)}"'
-            for k, v in oauth_params.items()
+    def _get_oauth(self) -> OAuth1:
+        """Get OAuth 1.0a authentication."""
+        return OAuth1(
+            self.api_key,
+            client_secret=self.api_secret,
+            resource_owner_key=self.access_token,
+            resource_owner_secret=self.access_secret,
+            signature_method="HMAC-SHA1",
         )
 
     def post(self, text: str) -> dict[str, Any]:
@@ -64,23 +41,21 @@ class XPoster:
             raise RuntimeError("X API credentials not configured")
 
         url = "https://api.twitter.com/2/tweets"
-        params = {"text": text}
+        payload = {"text": text}
+        auth = self._get_oauth()
 
-        auth_header = self._oauth_sign("POST", url, params)
+        resp = self.session.post(url, json=payload, auth=auth, timeout=30)
+        resp.raise_for_status()
+        return resp.json()
 
-        req = urllib.request.Request(
-            url,
-            data=json.dumps(params).encode(),
-            headers={
-                "Authorization": auth_header,
-                "Content-Type": "application/json",
-            },
-            method="POST",
-        )
+    def get_me(self) -> dict[str, Any]:
+        """Get current user info."""
+        if not self.is_configured:
+            raise RuntimeError("X API credentials not configured")
 
-        try:
-            with urllib.request.urlopen(req, timeout=30) as resp:
-                return json.loads(resp.read().decode())
-        except urllib.error.HTTPError as e:
-            body = e.read().decode()
-            raise RuntimeError(f"X API error {e.code}: {body}") from e
+        url = "https://api.twitter.com/2/users/me"
+        auth = self._get_oauth()
+
+        resp = self.session.get(url, auth=auth, timeout=30)
+        resp.raise_for_status()
+        return resp.json()

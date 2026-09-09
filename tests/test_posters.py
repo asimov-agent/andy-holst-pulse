@@ -4,6 +4,7 @@ import os
 from unittest.mock import MagicMock, patch
 
 import pytest
+import requests
 
 from src.linkedin_poster import LinkedInPoster
 from src.x_poster import XPoster
@@ -33,7 +34,11 @@ class TestXPoster:
             with pytest.raises(RuntimeError, match="not configured"):
                 poster.post("test tweet")
 
-    def test_post_success(self):
+    @patch("requests_oauthlib.OAuth1")
+    def test_post_success(self, mock_oauth_cls):
+        mock_oauth = MagicMock()
+        mock_oauth_cls.return_value = mock_oauth
+
         env = {
             "X_API_KEY": "test_key",
             "X_API_SECRET": "test_secret",
@@ -43,13 +48,32 @@ class TestXPoster:
         }
         with patch.dict(os.environ, env, clear=True):
             poster = XPoster()
-            mock_resp = MagicMock()
-            mock_resp.read.return_value = b'{"data":{"id":"123","text":"test"}}'
-            mock_resp.__enter__ = MagicMock(return_value=mock_resp)
-            mock_resp.__exit__ = MagicMock(return_value=False)
 
-            with patch("urllib.request.urlopen", return_value=mock_resp):
+            mock_resp = MagicMock()
+            mock_resp.json.return_value = {"data": {"id": "123", "text": "test"}}
+            mock_resp.raise_for_status = MagicMock()
+
+            with patch.object(poster.session, "post", return_value=mock_resp):
                 result = poster.post("test tweet")
+                assert result["data"]["id"] == "123"
+
+    def test_get_me_success(self):
+        env = {
+            "X_API_KEY": "test_key",
+            "X_API_SECRET": "test_secret",
+            "X_ACCESS_TOKEN": "test_token",
+            "X_ACCESS_SECRET": "test_access",
+            "X_BEARER_TOKEN": "test_bearer",
+        }
+        with patch.dict(os.environ, env, clear=True):
+            poster = XPoster()
+
+            mock_resp = MagicMock()
+            mock_resp.json.return_value = {"data": {"id": "123", "username": "testuser"}}
+            mock_resp.raise_for_status = MagicMock()
+
+            with patch.object(poster.session, "get", return_value=mock_resp):
+                result = poster.get_me()
                 assert result["data"]["id"] == "123"
 
 
@@ -83,11 +107,11 @@ class TestLinkedInPoster:
         }
         with patch.dict(os.environ, env, clear=True):
             poster = LinkedInPoster()
-            mock_resp = MagicMock()
-            mock_resp.read.return_value = b'{"id":"urn:li:share:123"}'
-            mock_resp.__enter__ = MagicMock(return_value=mock_resp)
-            mock_resp.__exit__ = MagicMock(return_value=False)
 
-            with patch("urllib.request.urlopen", return_value=mock_resp):
+            mock_resp = MagicMock()
+            mock_resp.json.return_value = {"id": "urn:li:share:123"}
+            mock_resp.raise_for_status = MagicMock()
+
+            with patch.object(poster.session, "post", return_value=mock_resp):
                 result = poster.post("test post")
                 assert "id" in result
