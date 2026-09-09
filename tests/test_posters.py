@@ -3,11 +3,10 @@
 import os
 from unittest.mock import MagicMock, patch
 
-import pytest
-import requests
-
 from src.linkedin_poster import LinkedInPoster
 from src.x_poster import XPoster
+
+import pytest
 
 
 class TestXPoster:

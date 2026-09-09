@@ -1,9 +1,8 @@
 """Tests for the daily_pulse CLI."""
 
-import pytest
-from unittest.mock import patch, MagicMock
-from pathlib import Path
 import sys
+from pathlib import Path
+from unittest.mock import MagicMock, patch
 
 # Add scripts dir to path for import
 scripts_dir = str(Path(__file__).parent.parent / "scripts")

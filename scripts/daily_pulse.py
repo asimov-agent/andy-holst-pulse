@@ -8,9 +8,9 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
+from linkedin_poster import LinkedInPoster
 from pulse import format_daily_post, get_events, get_repos, get_user
 from x_poster import XPoster
-from linkedin_poster import LinkedInPoster
 
 
 def main() -> None:
