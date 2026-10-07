@@ -1,8 +1,6 @@
 name: Daily Pulse Post
 
 on:
-  schedule:
-    - cron: '0 9 * * *'  # 9 AM UTC daily
   workflow_dispatch:
 
 jobs:
