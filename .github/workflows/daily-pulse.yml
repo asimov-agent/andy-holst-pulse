@@ -12,7 +12,7 @@ jobs:
         with:
           python-version: '3.11'
       - name: Install deps
-        run: pip install -r requirements.txt
+        run: pip install -r requirements-dev.txt
       - name: Generate pulse post
         run: python scripts/daily_pulse.py --dry-run
         env:
